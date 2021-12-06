@@ -39,6 +39,12 @@ Create a file named `.env` and put the the generated token into it like below,
 GITHUB_TOKEN=<ghp_***********>
 ```
 
+# Running
+
+You can run the following command to run the application.
+```
+python3 app.py
+```
 
 
 
