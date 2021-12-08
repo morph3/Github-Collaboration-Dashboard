@@ -29,14 +29,14 @@ https://github.com/settings/tokens/new
 
 Your generated token should look like below
 ```
-<ghp_***********>
+ghp_***********
 ```
 
 
 Create a file named `.env` and put the the generated token into it like below,
 
 ```
-GITHUB_TOKEN=<ghp_***********>
+GITHUB_TOKEN=ghp_***********
 ```
 
 # Running
