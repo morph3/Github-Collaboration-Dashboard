@@ -1,6 +1,7 @@
 import flask
 import requests
 import sys
+import TruckFactor
 
 ENV = {}
 def dot_env_parser():
@@ -75,7 +76,7 @@ def repository_search():
     repository_name = repository_full_name.split('/')[1]
     
     repository_info = get_repository(repository_full_name)
-    
+    TruckFactor.get_repository(repository_info, ENV['GITHUB_TOKEN'])
     commits = get_commits(username, repository_name)
     number_of_commits = len(commits)
     repository_info["number_of_commits"] = number_of_commits # not a good solution but, let's just append it for now
