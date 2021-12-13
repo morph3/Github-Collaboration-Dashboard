@@ -43,10 +43,17 @@ def user_search():
 @app.route('/api/get_repository_info')
 def get_repository_info():
     """
-    This should take GET parameter r, and return repository information in json format
-    """
+    This should take GET parameters r & u, and return repository information in json format
 
-    pass
+    """
+    l={}
+
+    repo_name= flask.request.args.get('r')
+    username= flask.request.args.get('u') 
+    repo_info= gaw.get_repository(repository_full_name= repo_name,username= username)
+    
+    l["info"]=repo_info
+    return json.dumps(l)
 
 
 @app.route('/api/get_repository_commits')
@@ -54,6 +61,8 @@ def get_repository_commits():
     """
     This should take GET parameter r and return commits of a repository in json format
     """
+    
+
     pass
 
 
@@ -62,10 +71,14 @@ def get_user_repositories():
     """
     This should take GET parameter u and return repositories in json format
     """
-    username = flask.request.args.get('u')
-    repos=gaw.get_repositories(username)
-    
-    return json.dumps([i['name'] for i in repos])
+    l={}
+
+    username= flask.request.args.get('u')
+    repos= gaw.get_repositories(username)
+
+    l['repositories']= [i['name'] for i in repos]
+
+    return json.dumps(l)
 
 
 @app.route('/api/calculate_truck_factor')

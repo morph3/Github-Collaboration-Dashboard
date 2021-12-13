@@ -14,12 +14,12 @@ class GithubAPIWrapper:
         return requests.get(url, headers={'Authorization': f"token {self.token}"})
 
 
-    def get_repository(self, repository_full_name):
+    def get_repository(self, repository_full_name,username):
         """
         Get information about the given repository
         """
 
-        url = f"https://api.github.com/repos/{repository_full_name}" # Ex, https://api.github.com/repos/morph3/crawpy
+        url = f"https://api.github.com/repos/{username}/{repository_full_name}" # Ex, https://api.github.com/repos/morph3/crawpy
         
         response = self.do_request(url)
         """
