@@ -1,6 +1,9 @@
 import flask
 import requests
 import sys
+
+import json
+
 from src.TruckFactor import TruckFactorCalculator
 from src.GithubAPIWrapper import GithubAPIWrapper
 
@@ -40,8 +43,9 @@ def user_search():
 @app.route('/api/get_repository_info')
 def get_repository_info():
     """
-    This should take GET parameter r and return repository information in json format
+    This should take GET parameter r, and return repository information in json format
     """
+
     pass
 
 
@@ -58,7 +62,10 @@ def get_user_repositories():
     """
     This should take GET parameter u and return repositories in json format
     """
-    pass
+    username = flask.request.args.get('u')
+    repos=gaw.get_repositories(username)
+    
+    return json.dumps([i['name'] for i in repos])
 
 
 @app.route('/api/calculate_truck_factor')
