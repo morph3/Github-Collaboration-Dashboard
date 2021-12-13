@@ -50,9 +50,9 @@ def get_repository_info():
 
     repo_name= flask.request.args.get('r')
     username= flask.request.args.get('u') 
-    repo_info= gaw.get_repository(repository_full_name= repo_name,username= username)
     
-    l["info"]=repo_info
+    l["Information"]= gaw.get_repository(repository_full_name= repo_name,username= username)
+
     return json.dumps(l)
 
 
@@ -76,7 +76,7 @@ def get_user_repositories():
     username= flask.request.args.get('u')
     repos= gaw.get_repositories(username)
 
-    l['repositories']= [i['name'] for i in repos]
+    l['Repositories']= [i['name'] for i in repos]
 
     return json.dumps(l)
 
