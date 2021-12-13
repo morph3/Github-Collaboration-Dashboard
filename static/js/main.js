@@ -20,6 +20,7 @@ function open_repo_search_modal() {
     $("#searchInputLabel").html("Repository Name:");
     $("#searchModalLabel").html("Enter Repository Name");
     $('#searchFormId').attr('action', '/repository?r=');
+    
     $('#searchInputId').attr('placeholder', 'Enter full repository name, for ex: "SerenityOS/serenity"');
 
     $('#searchModal').modal('toggle');

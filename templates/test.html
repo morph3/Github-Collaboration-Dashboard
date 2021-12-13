@@ -10,33 +10,13 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/main.css') }}">
     <script src="{{url_for( 'static',filename='js/main.js' )}}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 
 </head>
 
 
 <body>
-<<<<<<< Updated upstream
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container"> <button class="navbar-toggler navbar-toggler-right border-0 p-0" type="button" data-toggle="collapse" data-target="#navbar8">
-        <p class="navbar-brand text-primary mb-0">
-        <i class="fa d-inline fa-lg fa-stop-circle"></i> BRAND </p>
-        </button>
-            <div class="collapse navbar-collapse" id="navbar8">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item"> <a class="nav-link" href="/">Home</a> </li>
-                </ul>
-                <p class="text-primary d-none d-md-block lead mb-0"> <b> Github Collaboration Dashboard</b>&nbsp;</p>
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item"> <a class="nav-link" href="#">{{username}}</a> </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-=======
 
->>>>>>> Stashed changes
     <div class="">
         <div class="container">
 
@@ -86,7 +66,7 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <p class="">&lt;Informatory paragraph about the user&gt;</p>
+                                            <p class="">&lt;Informatory paragraph about the current repository&gt;</p>
                                         </div>
                                     </div>
 
@@ -118,7 +98,6 @@
                                 <div class="col-md-12">
                                     <p class="text-monospace" id="currentVariantParagraphId">&lt;Information about the current variant&gt;<br></p>
                                     <p class="text-monospace" id="truckFactorDevelopersParagraphId">&lt;Which developers form the truck factor&gt;<br></p>
-                                    <p class="text-monospace" id="repositoriesUserInTruckFactorParagraphId">&lt;Information about which repositories user in truck factor&gt;<br>&lt;placeholder&gt;</p>
                                 </div>
                                 <!-- end row-->
                             </div>
@@ -129,16 +108,20 @@
                             <div class="row">
                                 <div class="col-md-12">
                                 </div>
-                                <!-- end row-->
                             </div>
-
-                            <!-- row start -->
                             <div class="row">
-                                {% for repository in repositories %}
-                                <li><a href="{{ repository.html_url }}">{{ repository.full_name }}</a> ->
-                                    <a href="/repository?r={{repository.full_name}}">  Analyze this repository </a>
-                                </li>
-                                {% endfor %}
+                                <p class="">
+                                    <img src="{{repository_info.owner.avatar_url}}" width="100" height="100"><br>
+                                    <b>{{repository_info.full_name}}</b>
+                                    <li>Number of stars: {{repository_info.stargazers_count}}</li>
+                                    <li>Number of watchers: {{repository_info.watchers}}</li>
+                                    <li>Number of forks: {{repository_info.forks_count}}</li>
+                                    <li>Number of issues: {{repository_info.open_issues_count}}</li>
+                                    <li>Number of forks: {{repository_info.forks_count}}</li>
+                                    <li>Number of commits: {{repository_info.number_of_commits}}</li>
+
+                                </p>
+
                                 <!-- end row-->
                             </div>
 
