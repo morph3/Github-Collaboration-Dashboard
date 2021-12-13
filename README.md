@@ -30,14 +30,14 @@ https://github.com/settings/tokens/new
 
 Your generated token should look like below
 ```
-<ghp_***********>
+ghp_***********
 ```
 
 
 Create a file named `.env` and put the the generated token into it like below,
 
 ```
-GITHUB_TOKEN=<ghp_***********>
+GITHUB_TOKEN=ghp_***********
 ```
 
 # Running
@@ -74,6 +74,36 @@ In order to change branches in your local, you can use git's `checkout` function
 ```
 git checkout <branch_name>
 ```
+
+# Looking the all branches & Changing the working branch 
+In this repository, there are multiple branches like `main` or `dev`. 
+## Loolking the brances
+
+To check all branches,you can use git's `branch` command in your command prompt:
+
+```
+git branch
+```
+
+
+The output should be like this:
+
+```
+C:\...\CNG491-Github-Collaboration-Dashboard>git branch
+  dev
+* main
+...
+```
+The branch has an asterisk "`*`" in the beginning shows which branch are you working in right now. 
+
+## Changing branch
+
+In order to change branches in your local, you can use git's `checkout` function like this:
+
+```
+git checkout <branch_name>
+```
+
 
 
 

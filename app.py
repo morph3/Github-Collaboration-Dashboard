@@ -1,11 +1,8 @@
 import flask
 import requests
 import sys
-<<<<<<< Updated upstream
-=======
 from src.TruckFactor import TruckFactorCalculator
 from src.GithubAPIWrapper import GithubAPIWrapper
->>>>>>> Stashed changes
 
 ENV = {}
 def dot_env_parser():
@@ -25,18 +22,9 @@ def index():
 def repository_search():
     
     repository_full_name = flask.request.args.get('r')
-<<<<<<< Updated upstream
-    username = repository_full_name.split('/')[0]
-    repository_name = repository_full_name.split('/')[1]
-    
-    repository_info = get_repository(repository_full_name)
-    
-    commits = get_commits(username, repository_name)
-=======
     repository_info = gaw.get_repository(repository_full_name)
     #TruckFactor.get_repository(repository_info, ENV['GITHUB_TOKEN'])
     commits = gaw.get_commits(repository_full_name)
->>>>>>> Stashed changes
     number_of_commits = len(commits)
     repository_info["number_of_commits"] = number_of_commits # not a good solution but, let's just append it for now
     return flask.render_template('repo-based.html', repository_info=repository_info )
