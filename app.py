@@ -1,6 +1,11 @@
 import flask
 import requests
 import sys
+<<<<<<< Updated upstream
+=======
+from src.TruckFactor import TruckFactorCalculator
+from src.GithubAPIWrapper import GithubAPIWrapper
+>>>>>>> Stashed changes
 
 ENV = {}
 def dot_env_parser():
@@ -11,57 +16,6 @@ def dot_env_parser():
 
 app = flask.Flask(__name__)
 
-
-def get_repository(repository_full_name):
-    """
-    Get information about the given repository
-    """
-
-    url = 'https://api.github.com/repos/{}'.format(repository_full_name) # Ex, https://api.github.com/repos/morph3/crawpy
-    
-    response = requests.get(url, headers={'Authorization': 'token {}'.format(ENV['GITHUB_TOKEN'])})
-    """
-    stargazers_count -> number of stars
-    watchers_count -> number of watchers
-    forks_count -> number of forks
-    open_issues_count -> number of open issues
-    owner.avatar_url -> url to the avatar image > we can use this to get the image for a better display
-    """
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return []
-
-def get_commits(username, repository_name):
-    """
-    Get a list of commits for a given repository.
-    """
-    # Ex,
-    # https://api.github.com/repos/morph3/crawpy/commits
-    url = 'https://api.github.com/repos/{}/{}/commits'.format(username, repository_name) 
-    
-    # this returns a list of json objects, each one represents a commit
-    response = requests.get(url, headers={'Authorization': 'token {}'.format(ENV['GITHUB_TOKEN'])})
-    
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return []
-
-def get_repositories(username):
-    """
-    Get a list of repositories for a given user.
-    """
-    url = 'https://api.github.com/users/{}/repos'.format(username)
-    response = requests.get(url, headers={'Authorization': 'token {}'.format(ENV['GITHUB_TOKEN'])})
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return []
-
-
-
-
 # index route
 @app.route('/')
 def index():
@@ -71,12 +25,18 @@ def index():
 def repository_search():
     
     repository_full_name = flask.request.args.get('r')
+<<<<<<< Updated upstream
     username = repository_full_name.split('/')[0]
     repository_name = repository_full_name.split('/')[1]
     
     repository_info = get_repository(repository_full_name)
     
     commits = get_commits(username, repository_name)
+=======
+    repository_info = gaw.get_repository(repository_full_name)
+    #TruckFactor.get_repository(repository_info, ENV['GITHUB_TOKEN'])
+    commits = gaw.get_commits(repository_full_name)
+>>>>>>> Stashed changes
     number_of_commits = len(commits)
     repository_info["number_of_commits"] = number_of_commits # not a good solution but, let's just append it for now
     return flask.render_template('repo-based.html', repository_info=repository_info )
@@ -85,10 +45,52 @@ def repository_search():
 @app.route('/user')
 def user_search():
     username = flask.request.args.get('u')
-    repos = get_repositories(username)
+    repos = gaw.get_repositories(username)
     return flask.render_template('user-based.html', username=username, repositories=repos)
+
+
+@app.route('/api/get_repository_info')
+def get_repository_info():
+    """
+    This should take GET parameter r and return repository information in json format
+    """
+    pass
+
+
+@app.route('/api/get_repository_commits')
+def get_repository_commits():
+    """
+    This should take GET parameter r and return commits of a repository in json format
+    """
+    pass
+
+
+@app.route('/api/get_user_repositories')
+def get_user_repositories():
+    """
+    This should take GET parameter u and return repositories in json format
+    """
+    pass
+
+
+@app.route('/api/calculate_truck_factor')
+def calculate_truck_factor():
+    """
+    This should take GET parameter r and t and return truck factor result of type t in json format including who forms the truck factor 
+    """
+    pass
+
+
+"""
+TODO: write needed api routes following the pattern above 
+"""
+
+
+
 
 
 if __name__ == '__main__':
     dot_env_parser()
+    gaw = GithubAPIWrapper(ENV["GITHUB_TOKEN"])
+
     app.run(debug=True, port=5000, threaded=True)
