@@ -112,7 +112,7 @@ class GithubAPIWrapper:
         #file_commits = {}
 
         thread_list = []
-        n_threads = 30
+        n_threads = 40
         for t in range(n_threads):
             t = threading.Thread(target=self.get_file_commits_helper, args=(repository_full_name,file_list,))
             thread_list.append(t)
