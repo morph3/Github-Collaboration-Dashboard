@@ -1,3 +1,4 @@
+from os import truncate
 import flask
 import requests
 import sys
@@ -43,17 +44,15 @@ def user_search():
 @app.route('/api/get_repository_info')
 def get_repository_info():
     """
-    This should take GET parameters r & u, and return repository information in json format
+    This should take GET parameters r, and return repository information in json format
 
     """
     l={}
 
-    repo_name= flask.request.args.get('r')
-    username= flask.request.args.get('u') 
+    repo_full_name= flask.request.args.get('r')
+    l["Information"]= gaw.get_repository(repository_full_name= repo_full_name)
     
-    l["Information"]= gaw.get_repository(repository_full_name= repo_name,username= username)
-
-    return json.dumps(l)
+    return json.dumps(l,indent=4)
 
 
 @app.route('/api/get_repository_commits')
@@ -61,9 +60,17 @@ def get_repository_commits():
     """
     This should take GET parameter r and return commits of a repository in json format
     """
-    
+    l=[]
 
-    pass
+    repo_full_name= flask.request.args.get('r')
+    
+    commits=gaw.get_commits(repository_full_name= repo_full_name)
+
+    for i in commits:
+        #Each line, Takes commiters' infos and commmit messages
+        l.append( {"commiter":i["commit"]["committer"], "commit": i["commit"]["message"] } )
+
+    return json.dumps(l,indent=4)
 
 
 @app.route('/api/get_user_repositories')
@@ -76,9 +83,10 @@ def get_user_repositories():
     username= flask.request.args.get('u')
     repos= gaw.get_repositories(username)
 
+    l['username']= username
     l['Repositories']= [i['name'] for i in repos]
 
-    return json.dumps(l)
+    return json.dumps(l,indent=4)
 
 
 @app.route('/api/calculate_truck_factor')
