@@ -109,6 +109,7 @@ if __name__ == "__main__":
 
     gaw = GithubAPIWrapper("")
     tf = TruckFactorCalculator(gaw)
+    
     start_time = time.time()
     tf.commit_based_truck_factor("morph3/crawpy")
     end_time = time.time()
