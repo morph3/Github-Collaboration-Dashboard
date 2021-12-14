@@ -11,6 +11,7 @@ function open_user_search_modal() {
     $("#searchInputLabel").html("Username:");
     $("#searchModalLabel").html("Enter Username");
     $('#searchFormId').attr('action', '/user?u=');
+    $('#searchInputId').attr('placeholder', 'Enter username, for ex: "SerenityOS"');
 
     $('#searchModal').modal('toggle');
 
@@ -20,7 +21,7 @@ function open_repo_search_modal() {
     $("#searchInputLabel").html("Repository Name:");
     $("#searchModalLabel").html("Enter Repository Name");
     $('#searchFormId').attr('action', '/repository?r=');
-    
+
     $('#searchInputId').attr('placeholder', 'Enter full repository name, for ex: "SerenityOS/serenity"');
 
     $('#searchModal').modal('toggle');
