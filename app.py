@@ -62,9 +62,9 @@ def get_repository_commits():
     """
     l=[]
 
-    repo_full_name= flask.request.args.get('r')
+    repo_full_name = flask.request.args.get('r')
     
-    commits=gaw.get_commits(repository_full_name= repo_full_name)
+    commits = gaw.get_commits(repository_full_name= repo_full_name)
 
     for i in commits:
         #Each line, Takes commiters' infos and commmit messages
@@ -80,8 +80,8 @@ def get_user_repositories():
     """
     l={}
 
-    username= flask.request.args.get('u')
-    repos= gaw.get_repositories(username)
+    username = flask.request.args.get('u')
+    repos = gaw.get_repositories(username)
 
     l['username']= username
     l['Repositories']= [i['name'] for i in repos]
@@ -94,7 +94,18 @@ def calculate_truck_factor():
     """
     This should take GET parameter r and t and return truck factor result of type t in json format including who forms the truck factor 
     """
-    pass
+    type = flask.request.args.get('t')
+    repository_full_name = flask.request.args.get('r')
+    tfc = TruckFactorCalculator(gaw)
+    if type == "commit":
+        result = tfc.commit_based_truck_factor(repository_full_name)
+        return json.dumps({"result":result})
+        
+    elif type == "blame":
+        return "{\"error\": \"blame not implemented yet\"}"
+    elif type == "heuristic":
+        return "{\"error\": \"blame not implemented yet\"}"
+    return
 
 
 """

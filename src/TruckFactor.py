@@ -16,6 +16,9 @@ class TruckFactorCalculator:
     def commit_based_truck_factor(self,repository_full_name):
         """
         Calculates the commit based truck factor for a given repository
+
+        :param repository_full_name: The full name of the repository
+        :return: array of users that build the truck factor
         """
 
         # those prints can stay here as they are not leaked to outside
@@ -101,8 +104,9 @@ class TruckFactorCalculator:
             coverage -= v
             if coverage < (totalFileCount / 2): #If we looked half of the files than we break
                 break
-
+        
         print(f"Truck Factor: {truckFactor}, length: {len(truckFactor)}")
+        return truckFactor
 
 
 if __name__ == "__main__":
@@ -115,27 +119,24 @@ if __name__ == "__main__":
     end_time = time.time()
     print(f"Time taken to calculate repo 'morph3/crawpy': {end_time - start_time}")
 
-
-
-    start_time = time.time()
-    tf.commit_based_truck_factor("xct/ropstar")
-    end_time = time.time()
-    print(f"Time taken to calculate repo 'xct/ropstar': {end_time - start_time}")
-
-
     start_time = time.time()
     tf.commit_based_truck_factor("apexcharts/apexcharts.js")
     end_time = time.time()
     print(f"Time taken to calculate repo 'apexcharts/apexcharts.js': {end_time - start_time}")
 
-
+    """
+    start_time = time.time()
+    tf.commit_based_truck_factor("xct/ropstar")
+    end_time = time.time()
+    print(f"Time taken to calculate repo 'xct/ropstar': {end_time - start_time}")
 
     start_time = time.time()
     tf.commit_based_truck_factor("SerenityOS/serenity")
     end_time = time.time()
     print(f"Time taken to calculate repo 'SerenityOS/serenity': {end_time - start_time}")
 
-
+    """
+    
 
     # before optimization
     """
