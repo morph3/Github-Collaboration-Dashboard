@@ -29,7 +29,9 @@ def repository_search():
     repository_info = gaw.get_repository(repository_full_name)
     #TruckFactor.get_repository(repository_info, ENV['GITHUB_TOKEN'])
     commits = gaw.get_commits(repository_full_name)
-    number_of_commits = len(commits)
+    lc = gaw.get_last_commit(repository_full_name)
+    number_of_commits = gaw.get_commit_count(repository_full_name, lc)
+
     repository_info["number_of_commits"] = number_of_commits # not a good solution but, let's just append it for now
     return flask.render_template('repo-based.html', repository_info=repository_info )
 
