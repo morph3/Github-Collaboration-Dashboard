@@ -109,7 +109,7 @@ git checkout <branch_name>
 
 # Authors  
 
-Emin Ekin ÖRS  
+Emir Ekin ÖRS  
 Gizem ÜNDER  
 Melih Kaan YILDIZ  
 Sedat Ali ZEVİT 
