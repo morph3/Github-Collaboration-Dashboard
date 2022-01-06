@@ -93,18 +93,19 @@ class TruckFactorCalculator:
                     except:
                         authoredFiles[a] = 1
 
+
         sortedAuthoredFiles = {}
-        for x in sorted(authoredFiles, key=operator.itemgetter(0)):
-            sortedAuthoredFiles[x] = authoredFiles[x]
+        for x in sorted(authoredFiles.items(), key=lambda a: a[1], reverse=True):
+            sortedAuthoredFiles[x[0]] = authoredFiles[x[0]]
 
         truckFactor = []
         coverage = 0
         for k,v in sortedAuthoredFiles.items():
             truckFactor.append(k)
-            coverage -= v
-            if coverage < (totalFileCount / 2): #If we looked half of the files than we break
+            coverage += v
+            if coverage > (totalFileCount / 2): #If we looked half of the files than we break
                 break
-        
+
         print(f"Truck Factor: {truckFactor}, length: {len(truckFactor)}")
         return truckFactor
 
@@ -113,7 +114,7 @@ if __name__ == "__main__":
 
     gaw = GithubAPIWrapper("")
     tf = TruckFactorCalculator(gaw)
-    
+
     start_time = time.time()
     tf.commit_based_truck_factor("morph3/crawpy")
     end_time = time.time()
@@ -136,7 +137,7 @@ if __name__ == "__main__":
     print(f"Time taken to calculate repo 'SerenityOS/serenity': {end_time - start_time}")
 
     """
-    
+
 
     # before optimization
     """
@@ -157,7 +158,7 @@ if __name__ == "__main__":
     Time taken to calculate repo 'apexcharts/apexcharts.js': 435.75945115089417
     """
 
-    # after optimization    
+    # after optimization
     """
     Calculating commit based truck factor for repository: morph3/crawpy
     Time taken to get file list: 0.9920079708099365
