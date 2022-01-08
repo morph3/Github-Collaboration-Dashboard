@@ -12,7 +12,7 @@ class TruckFactorCalculator:
         self.gaw = gaw # GithubAPIWrapper object
         pass
 
-
+    # Src: A Novel Approach for Estimating Truck Factors - Guilherme Avelino, Leonardo Passos, Andre Hora and Marco Tulio Valente
     def commit_based_truck_factor(self,repository_full_name):
         """
         Calculates the commit based truck factor for a given repository
@@ -93,27 +93,109 @@ class TruckFactorCalculator:
                     except:
                         authoredFiles[a] = 1
 
+
         sortedAuthoredFiles = {}
-        for x in sorted(authoredFiles, key=operator.itemgetter(0)):
-            sortedAuthoredFiles[x] = authoredFiles[x]
+        for x in sorted(authoredFiles.items(), key=lambda a: a[1], reverse=True):
+            sortedAuthoredFiles[x[0]] = authoredFiles[x[0]]
 
         truckFactor = []
         coverage = 0
         for k,v in sortedAuthoredFiles.items():
             truckFactor.append(k)
-            coverage -= v
-            if coverage < (totalFileCount / 2): #If we looked half of the files than we break
+            coverage += v
+            if coverage > (totalFileCount / 2): #If we looked half of the files than we break
                 break
-        
+
         print(f"Truck Factor: {truckFactor}, length: {len(truckFactor)}")
         return truckFactor
 
+    # Src: Assessing the bus factor of Git repositories - Valerio Cosentino, Javier Cánovas Izquierdo, Jordi Cabot
+    def heuristic_based_truck_factor(self,repository_full_name):
+        """
+        Calculates the heuristic based truck factor for a given repository
+
+        :param repository_full_name: The full name of the repository
+        :return: array of users that build the truck factor
+        """
+
+        # those prints can stay here as they are not leaked to outside
+        print(f"Calculating heuristic based truck factor for repository: {repository_full_name}")
+        start_time = time.time()
+        file_list = self.gaw.get_files(repository_full_name)
+        end_time = time.time()
+        print(f"Time taken to get file list: {end_time-start_time}")
+
+
+
+        start_time = time.time()
+        file_commits = self.gaw.get_file_commits(repository_full_name, file_list)
+        end_time = time.time()
+        print(f"Time taken to get file commits: {end_time-start_time}")
+
+
+        file_commits = dict((k, v) for k, v in file_commits.items() if v) # We remove the empty arrays
+
+        changeCount = {} # Number of commits of users
+
+        # k is the file name
+        # v[i] is the each user that commited
+        for k, v in file_commits.items():
+            changeCount[k] = {}
+            for i in range(0,len(v)):
+                try:
+                    changeCount[k][v[i]] += 1
+                except:
+                    changeCount[k][v[i]] = 1
+
+        totalCommitCount = {} # Total commit count of a file
+        knowledgeOfFile = {} # User's knowledge of file is (total commit count of user) / (total commit count of file)
+        primaryDeveloper = {}
+        secondaryDeveloper = {}
+        ownership = {} # Ownership = totalCountOfPrimaryDeveloper + (totalCountOfSecondaryDeveloper)/2
+        # k is the file name
+        # v[i] is the each user that commited
+        totalFileCount = 0
+        for k, v in changeCount.items():
+            totalFileCount += 1
+            totalCommitCount[k] = 0
+            primaryDeveloper[k] = []
+            secondaryDeveloper[k] = []
+            for name, count in v.items():
+                totalCommitCount[k] += count
+            primaryThreshold = 1 / float(len(v))        # Threshold to be primary developer. 1 / (total user count of file)
+            secondaryThreshold = primaryThreshold / 2   # Threshold to be secondary developer
+            for name, count in v.items():
+                knowledgeOfFile[name] = float(changeCount[k][name]) / float(totalCommitCount[k])
+                if knowledgeOfFile[name] >= primaryThreshold:
+                    primaryDeveloper[k].append(name)
+                    try:
+                        ownership[name] += 2
+                    except:
+                        ownership[name] = 2
+                elif knowledgeOfFile[name] >= secondaryThreshold:
+                    secondaryDeveloper[k].append(name)
+                    try:
+                        ownership[name] += 1
+                    except:
+                        ownership[name] = 1
+
+        totalUserCount = len(ownership)
+        print("Number of people: " + str(totalUserCount))
+        truckFactorThreshold = totalFileCount / totalUserCount   # This threshold is based on observation only. There is no evidence about it. It can be changed if a better threshold is found
+        truckFactor = []
+
+        for name, ownDegree in ownership.items():
+            if ownDegree >= truckFactorThreshold:
+                truckFactor.append(name)
+
+        print(f"Truck Factor: {truckFactor}, length: {len(truckFactor)}")
+        return truckFactor
 
 if __name__ == "__main__":
 
     gaw = GithubAPIWrapper("")
     tf = TruckFactorCalculator(gaw)
-    
+
     start_time = time.time()
     tf.commit_based_truck_factor("morph3/crawpy")
     end_time = time.time()
@@ -136,7 +218,7 @@ if __name__ == "__main__":
     print(f"Time taken to calculate repo 'SerenityOS/serenity': {end_time - start_time}")
 
     """
-    
+
 
     # before optimization
     """
@@ -157,7 +239,7 @@ if __name__ == "__main__":
     Time taken to calculate repo 'apexcharts/apexcharts.js': 435.75945115089417
     """
 
-    # after optimization    
+    # after optimization
     """
     Calculating commit based truck factor for repository: morph3/crawpy
     Time taken to get file list: 0.9920079708099365
