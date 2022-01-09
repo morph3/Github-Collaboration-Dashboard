@@ -4,6 +4,8 @@ import sys
 import json
 
 """
+Resources about Github REST API
+
 https://docs.github.com/en/rest/overview/resources-in-the-rest-api#pagination
 
 """
@@ -217,6 +219,40 @@ class GithubAPIWrapper:
             return []
 
 
+    def get_all_branch_names(self, repository_full_name):
+        """Returns the branch list in the given repositories
+        Args:
+            repository_full_name (string): The repository links in format like "{username}/{repo}"
+            
+        Returns:
+            branch_names : All branch names and informations about the branches in JSON format
+        """
+        
+        url = f"https://api.github.com/repos/{repository_full_name}/branches"
+        response = self.do_request(url)
+        
+        if response.status_code== 200:
+            return response.json()
+        else:
+            return []
+    
+
+    def get_issiues(self, repository_full_name):
+        """Returns the issiues of a given repository name
+        Args:
+        r: Repo full name
+        
+        Returns:
+        Issiues: JSON format of the issiues output of the GitHub API 
+        """
+        url = f"https://api.github.com/repos/{repository_full_name}/issues"
+        response = self.do_request(url)
+        
+        if response.status_code== 200:
+            return response.json()
+        else:
+            return []        
+
 
 if __name__ == "__main__":
     """
@@ -237,6 +273,9 @@ if __name__ == "__main__":
     count = gaw.get_commit_count(rn, lc)
     print(f"Commit count for {rn}: {count}")
 
+    bn = gaw.print_branch_list(rn)
+    print(f"Branch list for {rn}: {bn}")
+    
     """
     repository_info = gaw.get_repository("morph3/crawpy")
     #commits = gaw.get_commits("morph3/crawpy")

@@ -197,24 +197,64 @@ def calculate_truck_factor():
 @app.route('/api/get_issues')
 def get_issues():
     """
-    :return a list of issues in json format, it should include an entry for each issue whether it is closed or not
+    Args:
+    r: Repo full name
+    
+    Return: 
+    issiues: a list of issues in json format, it should include an entry for each issue whether it is closed or not
     it can have more additional entries as well
     """
-    pass
+    repo_full_name = flask.request.args.get('r')
+    
+    issiues= gaw.get_issiues(repo_full_name)    
+    
+    
+    
+    l= []
+    
+    # This can be changed with the requirements
+    #l = [ [ i["user"], i["title"], i["body"], i["state"], ... etc] for i in issiues ]
+    
+    l=issiues
+    
+    return json.dumps(l,indent=4)
 
 @app.route('/api/get_branches')
 def get_branches():
     """
-    :return a list of branches in json format
+    Args:
+    r: repository full name
+    
+    Return:
+    branch_names : a list of branches in json format
     """
-    pass
+    l={}
+
+    repo_full_name = flask.request.args.get('r')
+    
+    branch_names= gaw.get_all_branch_names(repo_full_name)
+    l['branch_names']= [i['name'] for i in branch_names]
+    
+    return json.dumps(l)
 
 @app.route('/api/get_info')
 def get_info():
     """
-    :return a string, should return a string that contains information about the given repository
+    Args:
+    r: repository full name
+    
+    :Return 
+    info: a string, should return a string that contains information about the given repository
     """
-    pass
+    
+    l={}
+    
+    repo_full_name= flask.request.args.get('r')
+    repo_info= gaw.get_repository(repository_full_name= repo_full_name)
+    
+    l["Description"]=repo_info["description"]
+    
+    return json.dumps(l)
 
 @app.route('/api/get_commit_distribution')
 def get_commit_distribution():
@@ -225,9 +265,7 @@ def get_commit_distribution():
 
 
 
-"""
-TODO: write needed api routes following the pattern above 
-"""
+
 
 
 
