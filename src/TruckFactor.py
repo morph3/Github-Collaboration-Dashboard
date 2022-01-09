@@ -6,6 +6,7 @@ try:
 except:
     from GithubAPIWrapper import GithubAPIWrapper
 import time
+import json
 
 class TruckFactorCalculator:
     def __init__(self,gaw):
@@ -18,7 +19,15 @@ class TruckFactorCalculator:
         Calculates the commit based truck factor for a given repository
 
         :param repository_full_name: The full name of the repository
-        :return: array of users that build the truck factor
+        :return: a json object that has entries, truck factor result, repository full name, users that form the truck factor and truck factor type, 
+        
+        Ex:
+        {
+            "repository-name": "apexcharts/apexcharts.js",
+            "type": "commit",
+            "users": ["Juned Chhipa", "Sergey", "junedchhipa", "Wojciech Frącz", "morph3", "Nemanja M", "Unknown", "Carl St-Laurent", "Konstantin Dinev", "Forbidden", "Thijs-jan Veldhuizen", "TomohiroHiratsuka", "Zura Jijavadze", "Martin Kravec", "Saleh", "Lea Verou", "yrajabi", "Brian Lagunas"],
+            "truck-factor": 18
+        }
         """
 
         # those prints can stay here as they are not leaked to outside
@@ -107,7 +116,13 @@ class TruckFactorCalculator:
                 break
 
         print(f"Truck Factor: {truckFactor}, length: {len(truckFactor)}")
-        return truckFactor
+        entry = {}
+        entry["repository_name"] = repository_full_name
+        entry["type"] = "commit"
+        entry["users"] = truckFactor
+        entry["truck_factor"] = len(truckFactor)
+
+        return entry
 
     # Src: Assessing the bus factor of Git repositories - Valerio Cosentino, Javier Cánovas Izquierdo, Jordi Cabot
     def heuristic_based_truck_factor(self,repository_full_name):
@@ -192,25 +207,37 @@ class TruckFactorCalculator:
         return truckFactor
 
 if __name__ == "__main__":
+    token = open("../.env","r").read().split("=")[1].strip()
+    gaw = GithubAPIWrapper(token)
 
-    gaw = GithubAPIWrapper("")
-    tf = TruckFactorCalculator(gaw)
+
+    tfc = TruckFactorCalculator(gaw)
 
     start_time = time.time()
-    tf.commit_based_truck_factor("morph3/crawpy")
+    tfc.commit_based_truck_factor("morph3/crawpy")
     end_time = time.time()
     print(f"Time taken to calculate repo 'morph3/crawpy': {end_time - start_time}")
+
+    """
+
+    start_time = time.time()
+    tf.commit_based_truck_factor("SerenityOS/serenity")
+    end_time = time.time()
+    print(f"Time taken to calculate repo 'SerenityOS/serenity': {end_time - start_time}")
+
+
+
+    start_time = time.time()
+    tf.commit_based_truck_factor("xct/ropstar")
+    end_time = time.time()
+    print(f"Time taken to calculate repo 'xct/ropstar': {end_time - start_time}")
+
 
     start_time = time.time()
     tf.commit_based_truck_factor("apexcharts/apexcharts.js")
     end_time = time.time()
     print(f"Time taken to calculate repo 'apexcharts/apexcharts.js': {end_time - start_time}")
 
-    """
-    start_time = time.time()
-    tf.commit_based_truck_factor("xct/ropstar")
-    end_time = time.time()
-    print(f"Time taken to calculate repo 'xct/ropstar': {end_time - start_time}")
 
     start_time = time.time()
     tf.commit_based_truck_factor("SerenityOS/serenity")

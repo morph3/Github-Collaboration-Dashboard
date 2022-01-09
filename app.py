@@ -1,21 +1,58 @@
-from os import truncate
 import flask
 import requests
 import sys
-
+import os
 import json
 
 from src.TruckFactor import TruckFactorCalculator
 from src.GithubAPIWrapper import GithubAPIWrapper
 
+
+# global variables
 ENV = {}
+TRUCK_FACTOR_CACHE = ""
+CACHE_FILE = None
+CACHE_NAME = "cache.json"
+HOSTNAME = "localhost:5000"
+
 def dot_env_parser():
     f = open(".env","r").read()
     for line in f.splitlines():
         k, v = line.split("=")
         ENV[k] = v
 
+def check_cache(repo_name, type):
+    # if the cache is empty return None
+    if TRUCK_FACTOR_CACHE == "":
+        return None
+
+    for item in TRUCK_FACTOR_CACHE:
+        try:
+            if (item["repository_name"] == repo_name) and (item["type"] == type):
+                return item
+        except:
+            continue
+    return None
+
+def update_cache(entry):
+
+    # if the cache is empty    
+    if TRUCK_FACTOR_CACHE == "":
+        CACHE_FILE = open(CACHE_NAME, "w")
+        CACHE_FILE.write(entry)
+        CACHE_FILE.close()
+
+    # append the given entry(dict)    
+    TRUCK_FACTOR_CACHE.append(entry)
+    CACHE_FILE = open(CACHE_NAME, "w")
+    CACHE_FILE.write(json.dumps(TRUCK_FACTOR_CACHE))
+
+    
+
+
 app = flask.Flask(__name__)
+
+
 
 # index route
 @app.route('/')
@@ -33,14 +70,14 @@ def repository_search():
     number_of_commits = gaw.get_commit_count(repository_full_name, lc)
 
     repository_info["number_of_commits"] = number_of_commits # not a good solution but, let's just append it for now
-    return flask.render_template('repo-based.html', repository_info=repository_info )
+    return flask.render_template('repo-based.html', repository_info=repository_info, hostname=HOSTNAME)
 
 
 @app.route('/user')
 def user_search():
     username = flask.request.args.get('u')
     repos = gaw.get_repositories(username)
-    return flask.render_template('user-based.html', username=username, repositories=repos)
+    return flask.render_template('user-based.html', username=username, repositories=repos, hostname=HOSTNAME)
 
 
 @app.route('/api/get_repository_info')
@@ -94,20 +131,98 @@ def get_user_repositories():
 @app.route('/api/calculate_truck_factor')
 def calculate_truck_factor():
     """
-    This should take GET parameter r and t and return truck factor result of type t in json format including who forms the truck factor 
+    :args r: repository full name
+    :args t: type of the repository
+    :returns: a json object of calculated truck factor, including repository name, tf, users and type
     """
+
+
     type = flask.request.args.get('t')
     repository_full_name = flask.request.args.get('r')
+    is_force = flask.request.args.get('force')
+    print(is_force)
+    cached_entry = check_cache(repository_full_name, type)
+    
+    
     tfc = TruckFactorCalculator(gaw)
+
     if type == "commit":
-        result = tfc.commit_based_truck_factor(repository_full_name)
-        return json.dumps({"result":result})
+
+        # if is_force is set to true, calculate the tf and cache it
+        if (is_force == "true"):
+            result = tfc.commit_based_truck_factor(repository_full_name)
+            update_cache(result)
+            # do the caching
+        else:
+            # if the is force is not set, 
+            # 
+            #check if the tf is in the cache
+            if(cached_entry):
+                print(f"We hit the cache with: {cached_entry}")
+                result = cached_entry
+            # if it's not in the cache, calculate it and cache it
+            else:
+                result = tfc.commit_based_truck_factor(repository_full_name)
+                update_cache(result)
+        
+        print(f"Returning {json.dumps(result)}")
+        return json.dumps(result), {"Content-Type":"application/json"} # result should already be in the format of json
         
     elif type == "blame":
         return "{\"error\": \"blame not implemented yet\"}"
+    
+    
+    
     elif type == "heuristic":
-        return "{\"error\": \"blame not implemented yet\"}"
-    return
+        
+        # if is_force is set to true, calculate the tf and cache it
+        if (is_force == "true"):
+            result = tfc.heuristic_based_truck_factor(repository_full_name)
+            update_cache(result)
+            # do the caching
+        else:
+            # if the is force is not set, 
+            # 
+            #check if the tf is in the cache
+            if(cached_entry):
+                result = cached_entry
+            # if it's not in the cache, calculate it and cache it
+            else:
+                result = tfc.heuristic_based_truck_factor(repository_full_name)
+                update_cache(result)
+        return json.dumps(result) , {"Content-Type":"application/json"} # result should already be in the format of json
+    return "{\"error\": \"Given truck factor is not found\"}"
+
+
+@app.route('/api/get_issues')
+def get_issues():
+    """
+    :return a list of issues in json format, it should include an entry for each issue whether it is closed or not
+    it can have more additional entries as well
+    """
+    pass
+
+@app.route('/api/get_branches')
+def get_branches():
+    """
+    :return a list of branches in json format
+    """
+    pass
+
+@app.route('/api/get_info')
+def get_info():
+    """
+    :return a string, should return a string that contains information about the given repository
+    """
+    pass
+
+@app.route('/api/get_commit_distribution')
+def get_commit_distribution():
+    """
+    :return a json object, it should contain a list users and their commit count
+    """
+    pass
+
 
 
 """
@@ -118,8 +233,17 @@ TODO: write needed api routes following the pattern above
 
 
 
+
+
 if __name__ == '__main__':
     dot_env_parser()
+
+    # if the cache.json file exists, load it
+    if os.path.exists(CACHE_NAME):
+        CACHE_FILE = open(CACHE_NAME,"r") # array of json objects 
+        TRUCK_FACTOR_CACHE = json.loads(CACHE_FILE.read())
+
+
     gaw = GithubAPIWrapper(ENV["GITHUB_TOKEN"])
 
     app.run(debug=True, port=5000, threaded=True)

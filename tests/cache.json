@@ -1,0 +1,21 @@
+[{
+    "repository_name": "SerenityOS/serenity",
+    "type": "commit",
+    "users": ["Andreas Kling", "Linus Groh", "Timothy Flynn", "Idan Horowitz", "Gunnar Beutner", "Brian Gianforcaro", "Luke Wilde", "Jan de Visser", "Ali Mohammad Pur", "Sam Atkins", "Luke", "Liav A", "Brian Callahan", "FalseHonesty", "Ben Wiederhake", "Brendan Coles", "Kenneth Myhra", "davidot", "Jelle Raaijmakers", "Daniel Bertalan", "Nico Weber", "Tim Schumacher", "Andrew Kaster", "Stephan Unverwerth", "Manuel Palenzuela", "AnotherTest", "DexesTTP", "Marcin Undak", "Eric Seifert", "Sergey Bugaev", "Martin B\u0159\u00edza", "Yonatan Goldschmidt", "sin-ack", "Noah Rosamilia", "jake.westrip", "Larkin", "kleines Filmr\u00f6llchen", "Max Wipfli", "Rodrigo Tobar", "Thiago Henrique Hupner", "TheMorc", "Dante Catalfamo", "Rafa\u0142 Babiarz", "xSlendiX", "Joachim Le Fournis", "Pankaj Raghav", "James Mintram", "Tom", "faxe1008", "Timothy", "Jesse Buhagiar", "Matthew Olsson", "Oleg Kosenkov", "AnicJov", "Vincent Sanders", "roytam1", "Valtteri Koskivuori", "x-yl", "Anonymous", "Jamie Mansfield", "Michel Hermier", "Jean-Baptiste Boric", "Peter Bocan", "Hediadyoin1", "Nick Johnson", "Tom Needham", "Jaan", "Dan MacDonald", "Stephen Gregoratto", "John Brehm", "\u041c\u0430\u043a\u0441\u0438\u043c \u0422\u0430\u0440\u0430\u0441\u043e\u0432", "Mustafa Ali CAN", "Alexander", "jonno85uk", "Emanuel Sprung", "Federico Guerinoni", "TheFightingCatfish", "aabajyan", "Itamar", "Nathan Ell", "nooga", "networkException", "Pavel Safar", "Paul Redmond", "Peter Elliott"],
+    "truck_factor": 85
+}, {
+    "repository_name": "apexcharts/apexcharts.js",
+    "type": "commit",
+    "users": ["Juned Chhipa", "Sergey", "junedchhipa", "Wojciech Fr\u0105cz", "Nemanja M", "Unknown", "Carl St-Laurent", "Konstantin Dinev", "Forbidden", "Thijs-jan Veldhuizen", "TomohiroHiratsuka", "Zura Jijavadze", "Martin Kravec", "Saleh", "Lea Verou", "yrajabi", "Brian Lagunas"],
+    "truck_factor": 17
+}, {
+    "repository_name": "morph3/crawpy",
+    "type": "commit",
+    "users": ["morph3"],
+    "truck_factor": 1
+}, {
+    "repository_name": "xct/ropstar",
+    "type": "commit",
+    "users": ["xct"],
+    "truck_factor": 1
+}]

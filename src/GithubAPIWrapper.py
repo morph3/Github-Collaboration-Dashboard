@@ -78,7 +78,6 @@ class GithubAPIWrapper:
         """
         commits = self.get_commits(repository_full_name)
         tree = commits[0]['commit']['tree']['url'] + "?recursive=1" # https://api.github.com/repos/morph3/crawpy/git/trees/f6bc50e364496e95422b9deb56a17d258c2b2d2c?recursive=1
-        
         response = self.do_request(tree)
         file_list = []
         if response.status_code == 200:
@@ -117,7 +116,7 @@ class GithubAPIWrapper:
 
         #url_base = f"https://api.github.com/repos/{repository_full_name}/commits?path="
 
-        #file_commits = {}
+        self.file_commits = {} # make sure its empty
 
         thread_list = []
         n_threads = 50
