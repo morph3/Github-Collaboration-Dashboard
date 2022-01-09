@@ -4,6 +4,8 @@ import sys
 import os
 import json
 
+from collections import Counter
+
 from src.TruckFactor import TruckFactorCalculator
 from src.GithubAPIWrapper import GithubAPIWrapper
 
@@ -241,9 +243,24 @@ def get_branches():
 @app.route('/api/get_commit_distribution')
 def get_commit_distribution():
     """
-    :return a json object, it should contain a list users and their commit count
+    Args: 
+    r: Repo full name
+    
+    :Return 
+    commit_distribution: a json object, it should contain a list users and their commit count
     """
-    pass
+    l=[]
+
+    repo_full_name = flask.request.args.get('r')
+    
+    commits=gaw.get_commits(repo_full_name)
+    
+    #Trim the commits with name
+    l=[i['commit']['author']['name'] for i in commits]
+    
+    result= Counter(l)
+    
+    return json.dumps(result, indent=4)
 
 
 
