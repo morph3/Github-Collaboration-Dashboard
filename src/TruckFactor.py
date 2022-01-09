@@ -204,7 +204,13 @@ class TruckFactorCalculator:
                 truckFactor.append(name)
 
         print(f"Truck Factor: {truckFactor}, length: {len(truckFactor)}")
-        return truckFactor
+        entry = {}
+        entry["repository_name"] = repository_full_name
+        entry["type"] = "heuristic"
+        entry["users"] = truckFactor
+        entry["truck_factor"] = len(truckFactor)
+
+        return entry
 
 if __name__ == "__main__":
     token = open("../.env","r").read().split("=")[1].strip()

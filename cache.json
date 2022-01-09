@@ -18,4 +18,19 @@
     "type": "commit",
     "users": ["xct"],
     "truck_factor": 1
+}, {
+    "repository_name": "ethereum/go-ethereum",
+    "type": "commit",
+    "users": ["P\u00e9ter Szil\u00e1gyi", "Martin Holst Swende", "Felix Lange", "lightclient", "Felf\u00f6ldi Zsolt", "Anton Evangelatov", "kilic", "Gustav Simonsson", "Marius van der Wijden", "gary rong", "Steve Ruckdashel", "Lucas Hendren", "Sina Mahmoodi", "obscuren", "Adam Schmideg", "Guillaume Ballet", "Kushagra Sharma", "ligi", "rene", "Lewis Marshall", "Jeffrey Wilcke", "Binacs", "Wenbiao Zheng", "Gautam Botrel", "Maxim Krasilnikov", "Richard Patel", "jwasinger", "meowsbits", "Andrey Petrov", "Andrei Maiboroda", "Michael Forney", "Valentin W\u00fcstholz", "rjl493456442", "Alex Mazalov", "Ferenc Szabo", "bas-vk"],
+    "truck_factor": 36
+}, {
+    "repository_name": "morph3/crawpy",
+    "type": "heuristic",
+    "users": ["morph3"],
+    "truck_factor": 1
+}, {
+    "repository_name": "apexcharts/apexcharts.js",
+    "type": "heuristic",
+    "users": ["junedchhipa", "Juned Chhipa", "Sergey", "Wojciech Fr\u0105cz", "Suvradip Saha"],
+    "truck_factor": 5
 }]
