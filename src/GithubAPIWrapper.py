@@ -237,7 +237,7 @@ class GithubAPIWrapper:
             return []
     
 
-    def get_issiues(self, repository_full_name):
+    def get_issues(self, repository_full_name):
         """Returns the issiues of a given repository name
         Args:
         r: Repo full name

@@ -206,7 +206,7 @@ def get_issues():
     """
     repo_full_name = flask.request.args.get('r')
     
-    issiues= gaw.get_issiues(repo_full_name)    
+    issiues= gaw.get_issues(repo_full_name)    
     
     
     
@@ -237,24 +237,6 @@ def get_branches():
     
     return json.dumps(l)
 
-@app.route('/api/get_info')
-def get_info():
-    """
-    Args:
-    r: repository full name
-    
-    :Return 
-    info: a string, should return a string that contains information about the given repository
-    """
-    
-    l={}
-    
-    repo_full_name= flask.request.args.get('r')
-    repo_info= gaw.get_repository(repository_full_name= repo_full_name)
-    
-    l["Description"]=repo_info["description"]
-    
-    return json.dumps(l)
 
 @app.route('/api/get_commit_distribution')
 def get_commit_distribution():
