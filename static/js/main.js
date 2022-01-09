@@ -35,5 +35,4 @@ function do_search() {
     //console.log(`Location is ${search_url}`);
     //alert(search_url);
     window.location.href = search_url;
-
 }

@@ -201,12 +201,12 @@ def get_issues():
     r: Repo full name
     
     Return: 
-    issiues: a list of issues in json format, it should include an entry for each issue whether it is closed or not
+    issues: a list of issues in json format, it should include an entry for each issue whether it is closed or not
     it can have more additional entries as well
     """
     repo_full_name = flask.request.args.get('r')
     
-    issiues= gaw.get_issues(repo_full_name)    
+    issues= gaw.get_issues(repo_full_name)    
     
     
     
@@ -215,7 +215,7 @@ def get_issues():
     # This can be changed with the requirements
     #l = [ [ i["user"], i["title"], i["body"], i["state"], ... etc] for i in issiues ]
     
-    l=issiues
+    l=issues
     
     return json.dumps(l,indent=4)
 
