@@ -44,16 +44,16 @@ function update_truck_factor_info(idx) {
 
     if (idx == 0) {
 
-        let str = "Commit based truck factor,";
+        let str = "Commit based truck factor, calculates target system by processing its evolution history. Algorithm determines how many commits each user has on all files, and it assigns a Degree of Author value to each user for each file. From these values, it declares users who are above the threshold as the author of the file. If a user has enough authored files, it puts that user in the truck factor list.";
         str += "<br>";
-        str += "This truck factor is calculated based on ...";
+        str += "This truck factor is calculated based on the AVL algorithm from A Novel Approach for Estimating Truck Factors paper which was written by Guilherme Avelino, Leonardo Passos, Andre Hora, and Marco Tulio Valente.";
         str += "<br>"
         elem.innerHTML = str;
 
     } else if (idx == 1) {
-        let str = "Heuristic based truck factor,";
+        let str = "Heuristic based truck factor, is composed of 6 steps, respectively File analysis, Developer Knowledge calculation, Key developers identification, Tuner, Truck factor assessment. The algorithm detects how much knowledge each user has about each file. If the user's knowledge of the file is above the primary threshold, the user is considered the primary developer of that file, or if it is above the secondary rather than the primary threshold, the user is considered the secondary developer. If it is not secondary, it is assumed that the user does not know anything about that file. Depending on the developer type, the algorithm gives different values to different users and puts users whose total knowledge value is above the threshold into the truck factor list";
         str += "<br>"
-        str += "This truck factor is calculated based on ...";
+        str += "This truck factor is calculated based on the CST Algorithm from Assessing the bus factor of Git repositories paper which was written by Valerio Cosentino, Javier Cánovas Izquierdo, Jordi Cabot.";
         str += "<br>"
         elem.innerHTML = str;
 
