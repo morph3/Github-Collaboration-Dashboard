@@ -16,7 +16,9 @@
 </head>
 
 
-<body>
+<!-- onload, update the truck factor info text-->
+
+<body onload="update_truck_factor_info(0)">
     <div class="">
         <div class="container">
 
@@ -62,13 +64,12 @@
 
                     <div class="">
                         <div class="container">
-
                             <!-- row start -->
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <p class="">{{repository_info.description}}</p>
+                                            <p class="">Repository Description:<br>{{repository_info.description}}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -96,10 +97,20 @@
 
                                         <script>
                                             function calculate_truck_factor() {
+                                                window.dispatchEvent(new Event('resize')); // after the render is done, send a resize event
+
+                                                let element = document.querySelector("#truckFactorChart");
+                                                element.textContent = ""; // clear the div before rendering the chart
+
+                                                let force = "false";
+                                                if ($('#flexCheckDefault').is(':checked')) {
+                                                    force = "true";
+                                                }
                                                 let result;
+
                                                 let type = $('.truck-factor-selector').val(); // get the currently selected option
                                                 let repository_name = "{{repository_info.full_name}}";
-                                                fetch(`http://{{hostname}}/api/calculate_truck_factor?t=${type}&r=${repository_name}`)
+                                                fetch(`http://{{hostname}}/api/calculate_truck_factor?t=${type}&r=${repository_name}&force=${force}`)
                                                     .then(function(response) {
                                                         return response.json();
                                                     })
@@ -110,6 +121,7 @@
                                                             series: new Array(result.truck_factor).fill(1),
                                                             chart: {
                                                                 type: 'pie',
+                                                                width: '500px',
                                                             },
                                                             labels: result.users,
                                                             responsive: [{
@@ -120,8 +132,22 @@
                                                                 }
                                                             }]
                                                         };
-                                                        var truckFactorChart = new ApexCharts(document.querySelector("#truckFactorChart"), options);
+                                                        let tfParagraph = document.querySelector("#truckFactorDevelopersParagraphId");
+                                                        tfParagraph.textContent = "";
+                                                        let i;
+                                                        let user;
+                                                        for (i = 0; i < result.users.length; i++) {
+                                                            user = result.users[i];
+                                                            let paragraph = document.createElement("li");
+                                                            paragraph.innerHTML = `${user}`;
+                                                            tfParagraph.appendChild(paragraph);
+                                                        }
+
+                                                        var truckFactorChart = new ApexCharts(element, options);
                                                         truckFactorChart.render();
+
+                                                        window.dispatchEvent(new Event('resize')); // after the render is done, send a resize event
+
                                                         // do something with jsonResponse
                                                     });
                                             }
@@ -151,30 +177,53 @@
                             </div>
 
 
-
                             <!-- row start -->
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="btn-group">
-                                        <button type="button" class="btn btn-primary" onclick=calculate_truck_factor()>Calculate Truck Factor<br></button>
-                                        <select class="truck-factor-selector">
+                                        <br>
+                                        <button type="button" class="btn btn-primary" id="truckFactorCalculateButton" onclick=calculate_truck_factor()>Calculate Truck Factor<br></button>
+                                        <select class="truck-factor-selector" onchange="update_truck_factor_info(this.selectedIndex);">
                                             <option value="commit">Commit based truck factor</option>
                                             <option value="heuristic">Heuristic based truck factor</option>
                                             <option value="blame">Blame based truck factor</option>
                                           </select>
+
+
+
                                     </div>
                                 </div>
 
 
                                 <!-- end row -->
                             </div>
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                            <label class="form-check-label" for="flexCheckDefault">
+                              Force re-calculating of truck factor
+                            </label>
 
                             <!-- row start -->
                             <!-- truck factor related information-->
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p class="text-monospace" id="currentVariantParagraphId">&lt;Information about the current variant&gt;<br></p>
-                                    <p class="text-monospace" id="truckFactorDevelopersParagraphId">&lt;Which developers form the truck factor&gt;<br></p>
+                                    <br>
+                                    <hr></hr>
+                                    <p>
+                                        Information about the current variant:
+                                    </p>
+                                    <p class="text-monospace" id="currentVariantParagraphId"><br></p>
+
+                                    <p>
+
+                                        <hr></hr>
+
+
+                                        Users that form the truck factor:
+                                    </p>
+
+                                    <ol id="truckFactorDevelopersParagraphId">
+                                        <!-- this is a list -->
+                                    </ol>
                                 </div>
                                 <!-- end row-->
                             </div>
@@ -381,17 +430,32 @@
     </div>
     <script>
         /*
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          hide.bs.tab is emitted on the currently active tab when we hide it.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          show.bs.tab is emitted on the to be shown tab when we click on it.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          hidden.bs.tab is emitted on the previous active tab is we hid that tab.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          shown.bs.tab is emitted when we’ve shown the newly active tab.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          hide.bs.tab is emitted on the currently active tab when we hide it.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          show.bs.tab is emitted on the to be shown tab when we click on it.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          hidden.bs.tab is emitted on the previous active tab is we hid that tab.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          shown.bs.tab is emitted when we’ve shown the newly active tab.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        */
         $("#myTab").on('shown.bs.tab', function(e) { // tabs on bootstrap emit shown event
 
             window.dispatchEvent(new Event('resize'));
             // on tab change, we need to send a resize event or, gracefully, the charts won't render
         });
+
+        /*
+        click emits the event immediately however we should be waiting for fetch to be finished
+        
+        $("#truckFactorCalculateButton").on('click', function(e) { // if we click on the calculate button, 
+            console.log("Clicked on the truckFactorCalculateButton")
+            window.dispatchEvent(new Event('resize')); // send a resize event
+        });
+    */
+
+        // . is class
+        // # is id
     </script>
+
+
+
 
 </body>
 

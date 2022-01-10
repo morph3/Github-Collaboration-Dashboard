@@ -36,3 +36,32 @@ function do_search() {
     //alert(search_url);
     window.location.href = search_url;
 }
+
+function update_truck_factor_info(idx) {
+    console.log(`Updating truck factor selector to ${idx}`);
+
+    let elem = document.querySelector("#currentVariantParagraphId");
+
+    if (idx == 0) {
+
+        let str = "Commit based truck factor,";
+        str += "<br>";
+        str += "This truck factor is calculated based on ...";
+        str += "<br>"
+        elem.innerHTML = str;
+
+    } else if (idx == 1) {
+        let str = "Heuristic based truck factor,";
+        str += "<br>"
+        str += "This truck factor is calculated based on ...";
+        str += "<br>"
+        elem.innerHTML = str;
+
+    } else if (idx == 2) {
+        elem.innerHTML = "Blame based truck factor";
+
+    }
+
+
+
+}

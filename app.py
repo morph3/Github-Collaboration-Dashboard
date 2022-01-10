@@ -31,6 +31,8 @@ def check_cache(repo_name, type):
     for item in TRUCK_FACTOR_CACHE:
         try:
             if (item["repository_name"] == repo_name) and (item["type"] == type):
+                print(f"We found a match in the cache for {repo_name} with type {type}")
+                print(item)
                 return item
         except:
             continue
@@ -49,7 +51,9 @@ def update_cache(entry):
     CACHE_FILE = open(CACHE_NAME, "w")
     CACHE_FILE.write(json.dumps(TRUCK_FACTOR_CACHE))
 
-    
+    # remove the oldest entry
+    # TODO: remove the oldest entry in the cache
+    return        
 
 
 app = flask.Flask(__name__)
@@ -142,7 +146,7 @@ def calculate_truck_factor():
     type = flask.request.args.get('t')
     repository_full_name = flask.request.args.get('r')
     is_force = flask.request.args.get('force')
-    print(is_force)
+    print(f"Is force: {is_force}")
     cached_entry = check_cache(repository_full_name, type)
     
     
