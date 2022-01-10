@@ -212,7 +212,7 @@ def get_issues():
     """
     repo_full_name = flask.request.args.get('r')
     
-    issues= gaw.get_issues(repo_full_name)    
+    issues= gaw.get_issues(repo_full_name)
     
     return json.dumps(issues), {"Content-Type":"application/json"}
 
