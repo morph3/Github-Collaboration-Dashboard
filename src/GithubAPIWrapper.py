@@ -245,14 +245,70 @@ class GithubAPIWrapper:
         Returns:
         Issiues: JSON format of the issiues output of the GitHub API 
         """
-        url = f"https://api.github.com/repos/{repository_full_name}/issues"
+
+        # we can get all the issues
+        # so for example open issues ends in 3 pages,
+        #https://api.github.com/repos/projectdiscovery/nuclei/issues?state=open&page=1
+        #https://api.github.com/repos/projectdiscovery/nuclei/issues?state=open&page=2
+        #https://api.github.com/repos/projectdiscovery/nuclei/issues?state=open&page=3
+
+        # fetch closed issues like abowe as well.
+        # After all the fetching is done, add all the issue objects together and return.
+
+        # ooor 
+        # we can fetch closed and open issues like below,
+        # https://api.github.com/search/issues?q=repo:projectdiscovery/nuclei+type:issue+state:open
+
+
+        # open issues
+        url = f"https://api.github.com/search/issues?q=repo:{repository_full_name}+type:issue+state:open"
+        response = self.do_request(url)
+        
+        result = {}
+        if response.status_code== 200:
+            result["open_issues"] = response.json()["total_count"]
+        else:
+            return []
+
+        # closed issues
+        url = f"https://api.github.com/search/issues?q=repo:{repository_full_name}+type:issue+state:closed"
         response = self.do_request(url)
         
         if response.status_code== 200:
+            result["closed_issues"] = response.json()["total_count"]
+        else:
+            return []
+
+        return result
+
+
+    def get_contributions(self, repository_full_name):
+        """
+        Returns the contributions of a given repository name
+        Args:
+        repository_full_name: Repo full name
+        
+        Returns:
+        Contributions: JSON format of the contributions output of the GitHub API 
+        
+        """
+        
+        #https://api.github.com/repos/projectdiscovery/nuclei/contributors
+        
+        # this per_page is a temporary fix, it might get f'd up with repositories that have huge number of contributors
+        url = f"https://api.github.com/repos/{repository_full_name}/contributors&per_page=1000"
+        response = self.do_request(url)
+
+        """
+        response["login] is the username
+        response["contributions] is the number of contributions
+        """
+
+        if response.status_code== 200:
             return response.json()
         else:
-            return []        
-
+            return []
+         
 
 if __name__ == "__main__":
     """

@@ -214,16 +214,7 @@ def get_issues():
     
     issues= gaw.get_issues(repo_full_name)    
     
-    
-    
-    l= []
-    
-    # This can be changed with the requirements
-    #l = [ [ i["user"], i["title"], i["body"], i["state"], ... etc] for i in issiues ]
-    
-    l=issues
-    
-    return json.dumps(l,indent=4)
+    return json.dumps(issues), {"Content-Type":"application/json"}
 
 @app.route('/api/get_branches')
 def get_branches():
@@ -232,20 +223,21 @@ def get_branches():
     r: repository full name
     
     Return:
-    branch_names : a list of branches in json format
+    branch_names : a list of json objects where each object contains the name of the branch, commit and protected field
     """
     l={}
 
     repo_full_name = flask.request.args.get('r')
     
     branch_names= gaw.get_all_branch_names(repo_full_name)
-    l['branch_names']= [i['name'] for i in branch_names]
     
-    return json.dumps(l)
+    return json.dumps(branch_names), {"Content-Type":"application/json"}
 
 
 @app.route('/api/get_commit_distribution')
 def get_commit_distribution():
+    # https://api.github.com/repos/projectdiscovery/nuclei/contributors
+
     """
     Args: 
     r: Repo full name
@@ -253,18 +245,12 @@ def get_commit_distribution():
     :Return 
     commit_distribution: a json object, it should contain a list users and their commit count
     """
-    l=[]
 
     repo_full_name = flask.request.args.get('r')
     
-    commits=gaw.get_commits(repo_full_name)
+    contributions = gaw.get_contributions(repo_full_name)
     
-    #Trim the commits with name
-    l=[i['commit']['author']['name'] for i in commits]
-    
-    result= Counter(l)
-    
-    return json.dumps(result, indent=4)
+    return json.dumps(contributions), {"Content-Type":"application/json"}
 
 
 
