@@ -113,7 +113,7 @@
 
                                                 let type = $('.truck-factor-selector').val(); // get the currently selected option
                                                 let repository_name = "{{repository_info.full_name}}";
-                                                fetch(`http://${window.location.host}/api/calculate_truck_factor?t=${type}&r=${repository_name}&force=${force}`)
+                                                fetch(`${window.location.protocol}//${window.location.host}/api/calculate_truck_factor?t=${type}&r=${repository_name}&force=${force}`)
                                                     .then(function(response) {
                                                         return response.json();
                                                     })
@@ -240,7 +240,7 @@
                         <div id="issueChart" class="row">
                             <script>
                                 let repository_name = "{{repository_info.full_name}}";
-                                fetch(`http://${window.location.host}/api/get_issues?r=${repository_name}`)
+                                fetch(`${window.location.protocol}//${window.location.host}/api/get_issues?r=${repository_name}`)
                                     .then(function(response) {
                                         return response.json();
                                     })
@@ -265,7 +265,7 @@
 
                         <div id="commitDistributionChart" class="row">
                             <script>
-                                fetch(`http://${window.location.host}/api/get_commit_distribution?r=${repository_name}`)
+                                fetch(`${window.location.protocol}//${window.location.host}/api/get_commit_distribution?r=${repository_name}`)
                                     .then(function(response) {
                                         return response.json();
                                     })
@@ -308,7 +308,7 @@
                                         let commitDistributionChartSelector = document.querySelector("#commitDistributionChart");
                                         var commitDistributionChart = new ApexCharts(commitDistributionChartSelector, options);
                                         commitDistributionChart.render();
-                                        //window.dispatchEvent(new Event('resize')); // after the render is done, send a resize event
+                                        window.dispatchEvent(new Event('resize')); // after the render is done, send a resize event
                                     });
                             </script>
                         </div>
@@ -327,15 +327,9 @@
         </div>
     </div>
     <script>
-        /* 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                hide.bs.tab is emitted on the currently active tab when we hide it.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                show.bs.tab is emitted on the to be shown tab when we click on it.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                hidden.bs.tab is emitted on the previous active tab is we hid that tab
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        */
-
         $("#myTab").on('shown.bs.tab', function(e) { // tabs on bootstrap emit shown event
 
-            //window.dispatchEvent(new Event('resize'));
+            window.dispatchEvent(new Event('resize'));
             // on tab change, we need to send a resize event or, gracefully, the charts won't render
         });
 
@@ -350,6 +344,11 @@
 
         // . is class
         // # is id
+        /* 
+hide.bs.tab is emitted on the currently active tab when we hide it.
+show.bs.tab is emitted on the to be shown tab when we click on it.
+hidden.bs.tab is emitted on the previous active tab is we hid that tab
+    */
     </script>
 
 
