@@ -16,7 +16,9 @@
 </head>
 
 
-<body>
+<!-- onload, update the truck factor info text-->
+
+<body onload="update_truck_factor_info(0)">
     <div class="">
         <div class="container">
 
@@ -62,13 +64,13 @@
 
                     <div class="">
                         <div class="container">
-
                             <!-- row start -->
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <p class="">&lt;Informatory paragraph about the current repository&gt;</p>
+                                            <p class="">
+                                                <br><b>Repository Description:</b><br>{{repository_info.description}}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -78,7 +80,7 @@
 
 
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-6">
                                     <p class="">
                                         <img src="{{repository_info.owner.avatar_url}}" width="100" height="100"><br>
                                         <b>{{repository_info.full_name}}</b>
@@ -87,62 +89,137 @@
                                         <li>Number of issues: {{repository_info.open_issues_count}}</li>
                                         <li>Number of forks: {{repository_info.forks_count}}</li>
                                         <li>Number of commits: {{repository_info.number_of_commits}}</li>
+                                        <li>Number of open issues: {{repository_info.open_issues}}</li>
+                                        <li>Number of close issues: {{repository_info.closed_issues}}</li>
                                     </p>
                                     <!-- end row-->
                                 </div>
-                            </div>
 
+                                <div class="col-md-6">
+                                    <p id="truckFactorChart">
+
+                                        <script>
+                                            function calculate_truck_factor() {
+                                                window.dispatchEvent(new Event('resize')); // after the render is done, send a resize event
+
+                                                let truckFactorChartSelector = document.querySelector("#truckFactorChart");
+                                                truckFactorChartSelector.textContent = ""; // clear the div before rendering the chart
+
+                                                let force = "false";
+                                                if ($('#flexCheckDefault').is(':checked')) {
+                                                    force = "true";
+                                                }
+                                                let result;
+
+                                                let type = $('.truck-factor-selector').val(); // get the currently selected option
+                                                let repository_name = "{{repository_info.full_name}}";
+                                                fetch(`${window.location.protocol}//${window.location.host}/api/calculate_truck_factor?t=${type}&r=${repository_name}&force=${force}`)
+                                                    .then(function(response) {
+                                                        return response.json();
+                                                    })
+                                                    .then(function(jsonResponse) {
+                                                        result = jsonResponse;
+                                                        console.log(result);
+                                                        var options = {
+                                                            series: new Array(result.truck_factor).fill(1),
+                                                            chart: {
+                                                                type: 'pie',
+                                                                width: '500px',
+                                                            },
+                                                            labels: result.users,
+                                                        };
+                                                        let tfParagraph = document.querySelector("#truckFactorDevelopersParagraphId");
+                                                        tfParagraph.textContent = "";
+                                                        let i;
+                                                        let user;
+                                                        for (i = 0; i < result.users.length; i++) {
+                                                            user = result.users[i];
+                                                            let paragraph = document.createElement("li");
+                                                            paragraph.innerHTML = `${user}`;
+                                                            tfParagraph.appendChild(paragraph);
+                                                        }
+
+                                                        var truckFactorChart = new ApexCharts(truckFactorChartSelector, options);
+                                                        truckFactorChart.render();
+
+                                                        window.dispatchEvent(new Event('resize')); // after the render is done, send a resize event
+
+                                                        // do something with jsonResponse
+                                                    });
+                                            }
+
+
+                                            /*
+                                            // switching to fetch would be better but xhr is easier
+                                            function calculate_truck_factor() {
+                                                let url = "http://{{hostname}}/api/calculate_truck_factor?t=commit&r=morph3/crawpy"
+                                                var xhr = new XMLHttpRequest();
+                                                let result;
+                                                xhr.onreadystatechange = function() {
+                                                    if (this.readyState == 4 && this.status == 200) {
+                                                        result = JSON.parse(this.responseText);
+                                                    }
+                                                }
+                                                xhr.open('GET', url, true);
+                                                xhr.send();
+                                                return result;
+
+                                            }
+                                            let result = calculate_truck_factor();
+                                            */
+                                        </script>
+                                    </p>
+                                </div>
+                            </div>
 
 
                             <!-- row start -->
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="btn-group">
-                                        <button type="button" class="btn btn-primary">Truck Factor Variants<br></button>
-                                        <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false"></button>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="#">Blame based truck factor</a>
-                                            <a class="dropdown-item" href="#">Commit based truck factor<br></a>
-                                            <a class="dropdown-item" href="#">Heuristic based truck factor</a>
-                                        </div>
+                                        <br>
+                                        <button type="button" class="btn btn-primary" id="truckFactorCalculateButton" onclick=calculate_truck_factor()>Calculate Truck Factor<br></button>
+                                        <select class="truck-factor-selector" onchange="update_truck_factor_info(this.selectedIndex);">
+                                            <option value="commit">Commit based truck factor</option>
+                                            <option value="heuristic">Heuristic based truck factor</option>
+                                            <option value="blame">Blame based truck factor</option>
+                                          </select>
+
+
+
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <p id="truckFactorChart">
-                                        <script>
-                                            var options = {
-                                                series: [44, 55, 13, 43, 22],
-                                                chart: {
-                                                    width: 380,
-                                                    type: 'pie',
-                                                },
-                                                labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
-                                                responsive: [{
-                                                    breakpoint: 480,
-                                                    options: {
-                                                        chart: {
-                                                            width: 200
-                                                        },
-                                                        legend: {
-                                                            position: 'bottom'
-                                                        }
-                                                    }
-                                                }]
-                                            };
-                                            var truckFactorChart = new ApexCharts(document.querySelector("#truckFactorChart"), options);
-                                            truckFactorChart.render();
-                                        </script>
-                                    </p>
-                                </div>
+
+
                                 <!-- end row -->
                             </div>
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                            <label class="form-check-label" for="flexCheckDefault">
+                              Force re-calculating of truck factor
+                            </label>
 
                             <!-- row start -->
                             <!-- truck factor related information-->
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p class="text-monospace" id="currentVariantParagraphId">&lt;Information about the current variant&gt;<br></p>
-                                    <p class="text-monospace" id="truckFactorDevelopersParagraphId">&lt;Which developers form the truck factor&gt;<br></p>
+                                    <br>
+                                    <hr></hr>
+                                    <p>
+                                        Information about the current variant:
+                                    </p>
+                                    <p class="text-monospace" id="currentVariantParagraphId"><br></p>
+
+                                    <p>
+
+                                        <hr></hr>
+
+
+                                        Users that form the truck factor:
+                                    </p>
+
+                                    <ol id="truckFactorDevelopersParagraphId">
+                                        <!-- this is a list -->
+                                    </ol>
                                 </div>
                                 <!-- end row-->
                             </div>
@@ -157,190 +234,92 @@
                 </div>
 
                 <div class="tab-pane fade" id="chart" role="tabpanel" aria-labelledby="chart-tab">
-                    Posuere urna nec tincidunt praesent semper feugiat. Nunc mattis enim ut tellus elementum sagittis vitae et. Proin libero nunc consequat interdum varius sit amet mattis vulputate. Amet nulla facilisi morbi tempus iaculis urna id volutpat. Enim nulla aliquet
-                    porttitor lacus luctus accumsan. Natoque penatibus et magnis dis parturient montes nascetur ridiculus mus. At augue eget arcu dictum varius. Dignissim enim sit amet venenatis urna cursus eget nunc scelerisque. Aliquam ut porttitor
-                    leo a diam sollicitudin tempor. Bibendum neque egestas congue quisque egestas diam in arcu cursus. Tincidunt vitae semper quis lectus nulla. Diam sollicitudin tempor id eu nisl nunc mi. Blandit volutpat maecenas volutpat blandit aliquam
-                    etiam erat. Aliquet bibendum enim facilisis gravida neque convallis a.
 
+                    <div class="container">
 
-                    <div class="row">
-                        <div class="col-md-6">
-
-                            <div id="exampleChart">
-                                <script>
-                                    var options = {
-                                        series: [{
-                                            data: [100, 21, 11, 5, 22, 43, 21]
-                                        }, {
-                                            data: [53, 32, 33, 52, 13, 44, 32]
-                                        }],
-                                        chart: {
-                                            type: 'bar',
-                                            height: 430
-                                        },
-                                        plotOptions: {
-                                            bar: {
-                                                horizontal: true,
-                                                dataLabels: {
-                                                    position: 'top',
-                                                },
-                                            }
-                                        },
-                                        dataLabels: {
-                                            enabled: true,
-                                            offsetX: -6,
-                                            style: {
-                                                fontSize: '12px',
-                                                colors: ['#fff']
-                                            }
-                                        },
-                                        stroke: {
-                                            show: true,
-                                            width: 1,
-                                            colors: ['#fff']
-                                        },
-                                        tooltip: {
-                                            shared: true,
-                                            intersect: false
-                                        },
-                                        xaxis: {
-                                            categories: [2001, 2002, 2003, 2004, 2005, 2006, 2007],
-                                        },
-                                    };
-                                    var exampleChart = new ApexCharts(document.querySelector("#exampleChart"), options);
-                                    exampleChart.render();
-                                </script>
-                            </div>
+                        <div id="issueChart" class="row">
+                            <script>
+                                let repository_name = "{{repository_info.full_name}}";
+                                fetch(`${window.location.protocol}//${window.location.host}/api/get_issues?r=${repository_name}`)
+                                    .then(function(response) {
+                                        return response.json();
+                                    })
+                                    .then(function(jsonResponse) {
+                                        result = jsonResponse;
+                                        console.log(result);
+                                        var options = {
+                                            series: [result.open_issues, result.closed_issues],
+                                            chart: {
+                                                type: 'pie',
+                                                width: '500px',
+                                            },
+                                            labels: ["open issues", "closed issues"],
+                                        };
+                                        let issueChartSelector = document.querySelector("#issueChart");
+                                        var issueChart = new ApexCharts(issueChartSelector, options);
+                                        issueChart.render();
+                                        window.dispatchEvent(new Event('resize')); // after the render is done, send a resize event
+                                    });
+                            </script>
                         </div>
-                        <div class="col-md-6">
-                            <div id="exampleChart2">
-                                <script>
-                                    var options = {
-                                        series: [{
-                                            name: 'Income',
-                                            type: 'column',
-                                            data: [1.4, 2, 2.5, 1.5, 2.5, 2.8, 3.8, 4.6]
-                                        }, {
-                                            name: 'Cashflow',
-                                            type: 'column',
-                                            data: [1.1, 3, 3.1, 4, 4.1, 4.9, 6.5, 8.5]
-                                        }, {
-                                            name: 'Revenue',
-                                            type: 'line',
-                                            data: [20, 29, 37, 36, 44, 45, 50, 58]
-                                        }],
-                                        chart: {
-                                            height: 350,
-                                            type: 'line',
-                                            stacked: false
-                                        },
-                                        dataLabels: {
-                                            enabled: false
-                                        },
-                                        stroke: {
-                                            width: [1, 1, 4]
-                                        },
-                                        title: {
-                                            text: 'XYZ - Stock Analysis (2009 - 2016)',
-                                            align: 'left',
-                                            offsetX: 110
-                                        },
-                                        xaxis: {
-                                            categories: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016],
-                                        },
-                                        yaxis: [{
-                                            axisTicks: {
-                                                show: true,
-                                            },
-                                            axisBorder: {
-                                                show: true,
-                                                color: '#008FFB'
-                                            },
-                                            labels: {
-                                                style: {
-                                                    colors: '#008FFB',
-                                                }
-                                            },
-                                            title: {
-                                                text: "Income (thousand crores)",
-                                                style: {
-                                                    color: '#008FFB',
-                                                }
-                                            },
-                                            tooltip: {
-                                                enabled: true
-                                            }
-                                        }, {
-                                            seriesName: 'Income',
-                                            opposite: true,
-                                            axisTicks: {
-                                                show: true,
-                                            },
-                                            axisBorder: {
-                                                show: true,
-                                                color: '#00E396'
-                                            },
-                                            labels: {
-                                                style: {
-                                                    colors: '#00E396',
-                                                }
-                                            },
-                                            title: {
-                                                text: "Operating Cashflow (thousand crores)",
-                                                style: {
-                                                    color: '#00E396',
-                                                }
-                                            },
-                                        }, {
-                                            seriesName: 'Revenue',
-                                            opposite: true,
-                                            axisTicks: {
-                                                show: true,
-                                            },
-                                            axisBorder: {
-                                                show: true,
-                                                color: '#FEB019'
-                                            },
-                                            labels: {
-                                                style: {
-                                                    colors: '#FEB019',
-                                                },
-                                            },
-                                            title: {
-                                                text: "Revenue (thousand crores)",
-                                                style: {
-                                                    color: '#FEB019',
-                                                }
-                                            }
-                                        }, ],
-                                        tooltip: {
-                                            fixed: {
-                                                enabled: true,
-                                                position: 'topLeft', // topRight, topLeft, bottomRight, bottomLeft
-                                                offsetY: 30,
-                                                offsetX: 60
-                                            },
-                                        },
-                                        legend: {
-                                            horizontalAlign: 'left',
-                                            offsetX: 40
+
+                        <div id="commitDistributionChart" class="row">
+                            <script>
+                                fetch(`${window.location.protocol}//${window.location.host}/api/get_commit_distribution?r=${repository_name}`)
+                                    .then(function(response) {
+                                        return response.json();
+                                    })
+                                    .then(function(jsonResponse) {
+                                        result = jsonResponse;
+                                        console.log(result);
+                                        let contributions = new Array();
+                                        let usernames = new Array();
+
+                                        for (let i = 0; i < result.length; i++) {
+                                            contributions.push(result[i].contributions);
+                                            usernames.push(result[i].login);
                                         }
-                                    };
+                                        console.log(`Contributions: ${contributions}`);
+                                        console.log(`Usernames: ${usernames}`);
 
-                                    var exampleChart2 = new ApexCharts(document.querySelector("#exampleChart2"), options);
-                                    exampleChart2.render();
-                                </script>
-                            </div>
+
+
+                                        var options = {
+                                            series: [{
+                                                data: contributions
+                                            }],
+                                            chart: {
+                                                type: 'bar',
+                                                height: 350
+                                            },
+                                            dataLabels: {
+                                                enabled: false
+                                            },
+                                            xaxis: {
+                                                categories: usernames,
+                                            },
+                                            yaxis: {
+                                                title: {
+                                                    text: 'Number of commits'
+                                                }
+                                            },
+                                        };
+
+                                        let commitDistributionChartSelector = document.querySelector("#commitDistributionChart");
+                                        var commitDistributionChart = new ApexCharts(commitDistributionChartSelector, options);
+                                        commitDistributionChart.render();
+                                        window.dispatchEvent(new Event('resize')); // after the render is done, send a resize event
+                                    });
+                            </script>
                         </div>
+
+
+
+                        <!-- end container -->
                     </div>
 
-                    <div class="col-md-12">
-                        <img class="img-fluid rounded-circle" src="https://static.pingendo.com/img-placeholder-3.svg" width="200" height="200">
-                        <img class="img-fluid rounded-circle" src="https://static.pingendo.com/img-placeholder-3.svg" width="200" height="200">
-                    </div>
 
-
-
+                    <!-- end tab pane-->
                 </div>
 
             </div>
@@ -348,18 +327,32 @@
         </div>
     </div>
     <script>
-        /*
-          hide.bs.tab is emitted on the currently active tab when we hide it.
-          show.bs.tab is emitted on the to be shown tab when we click on it.
-          hidden.bs.tab is emitted on the previous active tab is we hid that tab.
-          shown.bs.tab is emitted when we’ve shown the newly active tab.
-        */
         $("#myTab").on('shown.bs.tab', function(e) { // tabs on bootstrap emit shown event
 
             window.dispatchEvent(new Event('resize'));
             // on tab change, we need to send a resize event or, gracefully, the charts won't render
         });
+
+        /*
+        click emits the event immediately however we should be waiting for fetch to be finished
+        
+        $("#truckFactorCalculateButton").on('click', function(e) { // if we click on the calculate button, 
+            console.log("Clicked on the truckFactorCalculateButton")
+            window.dispatchEvent(new Event('resize')); // send a resize event
+        });
+    */
+
+        // . is class
+        // # is id
+        /* 
+hide.bs.tab is emitted on the currently active tab when we hide it.
+show.bs.tab is emitted on the to be shown tab when we click on it.
+hidden.bs.tab is emitted on the previous active tab is we hid that tab
+    */
     </script>
+
+
+
 
 </body>
 
