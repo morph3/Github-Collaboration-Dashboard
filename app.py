@@ -66,7 +66,7 @@ def index():
 
 @app.route('/repository')
 def repository_search():
-    
+
     repository_full_name = flask.request.args.get('r')
     repository_info = gaw.get_repository(repository_full_name)
     #TruckFactor.get_repository(repository_info, ENV['GITHUB_TOKEN'])
@@ -99,7 +99,7 @@ def get_repository_info():
 
     repo_full_name= flask.request.args.get('r')
     l["Information"]= gaw.get_repository(repository_full_name= repo_full_name)
-    
+
     return json.dumps(l,indent=4)
 
 
@@ -111,7 +111,7 @@ def get_repository_commits():
     l=[]
 
     repo_full_name = flask.request.args.get('r')
-    
+
     commits = gaw.get_commits(repository_full_name= repo_full_name)
 
     for i in commits:
@@ -202,7 +202,7 @@ def calculate_truck_factor():
         return json.dumps(result) , {"Content-Type":"application/json"} # result should already be in the format of json
     return "{\"error\": \"Given truck factor is not found\"}"
 
-
+  
 @app.route('/api/get_issues')
 def get_issues():
     """
@@ -230,6 +230,7 @@ def get_branches():
     """
     l={}
 
+
     repo_full_name = flask.request.args.get('r')
     
     branch_names= gaw.get_all_branch_names(repo_full_name)
@@ -256,16 +257,28 @@ def get_commit_distribution():
     return json.dumps(contributions), {"Content-Type":"application/json"}
 
 
-
-
-
+"""
+TODO: write needed api routes following the pattern above
+"""
 
 @app.route('/test')
 def test():
     return flask.render_template('test.html')
 
 
+@app.route('/api/get_number_of_contributors')
+def get_number_of_contributors():
+    """
+    Args:
+    r: Repo full name
 
+    :Return
+    number of contributers: a json object that contains count of total number of contributers, ex: {"number_of_contributers":2}
+    """
+    repo_full_name = flask.request.args.get('r')
+    result = gaw.get_contributors(repo_full_name)
+
+    return json.dumps({"number_of_contributers":len(result)})
 
 
 if __name__ == '__main__':
