@@ -73,9 +73,11 @@ def repository_search():
     commits = gaw.get_commits(repository_full_name)
     lc = gaw.get_last_commit(repository_full_name)
     number_of_commits = gaw.get_commit_count(repository_full_name, lc)
-
+    
+    issue_info=gaw.get_issues(repository_full_name)
+    
     repository_info["number_of_commits"] = number_of_commits # not a good solution but, let's just append it for now
-    return flask.render_template('repo-based.html', repository_info=repository_info)
+    return flask.render_template('repo-based.html', repository_info=repository_info, issue_info=issue_info)
 
 
 @app.route('/user')
