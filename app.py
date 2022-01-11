@@ -24,7 +24,7 @@ def index():
 
 @app.route('/repository')
 def repository_search():
-    
+
     repository_full_name = flask.request.args.get('r')
     repository_info = gaw.get_repository(repository_full_name)
     #TruckFactor.get_repository(repository_info, ENV['GITHUB_TOKEN'])
@@ -51,7 +51,7 @@ def get_repository_info():
 
     repo_full_name= flask.request.args.get('r')
     l["Information"]= gaw.get_repository(repository_full_name= repo_full_name)
-    
+
     return json.dumps(l,indent=4)
 
 
@@ -63,7 +63,7 @@ def get_repository_commits():
     l=[]
 
     repo_full_name = flask.request.args.get('r')
-    
+
     commits = gaw.get_commits(repository_full_name= repo_full_name)
 
     for i in commits:
@@ -92,7 +92,7 @@ def get_user_repositories():
 @app.route('/api/calculate_truck_factor')
 def calculate_truck_factor():
     """
-    This should take GET parameter r and t and return truck factor result of type t in json format including who forms the truck factor 
+    This should take GET parameter r and t and return truck factor result of type t in json format including who forms the truck factor
     """
     type = flask.request.args.get('t')
     repository_full_name = flask.request.args.get('r')
@@ -100,7 +100,7 @@ def calculate_truck_factor():
     if type == "commit":
         result = tfc.commit_based_truck_factor(repository_full_name)
         return json.dumps({"result":result})
-        
+
     elif type == "blame":
         return "{\"error\": \"blame not implemented yet\"}"
     elif type == "heuristic":
@@ -109,11 +109,23 @@ def calculate_truck_factor():
 
 
 """
-TODO: write needed api routes following the pattern above 
+TODO: write needed api routes following the pattern above
 """
 
 
+@app.route('/api/get_number_of_contributors')
+def get_number_of_contributors():
+    """
+    Args:
+    r: Repo full name
 
+    :Return
+    number of contributers: a json object that contains count of total number of contributers, ex: {"number_of_contributers":2}
+    """
+    repo_full_name = flask.request.args.get('r')
+    result = gaw.get_contributors(repo_full_name)
+
+    return json.dumps({"number_of_contributers":len(result)})
 
 
 if __name__ == '__main__':

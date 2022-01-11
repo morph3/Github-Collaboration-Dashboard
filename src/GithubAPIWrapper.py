@@ -20,7 +20,7 @@ class GithubAPIWrapper:
         """
 
         url = f"https://api.github.com/repos/{repository_full_name}" # Ex, https://api.github.com/repos/morph3/crawpy
-        
+
         response = self.do_request(url)
         """
         stargazers_count -> number of stars
@@ -40,11 +40,11 @@ class GithubAPIWrapper:
         """
         # Ex,
         # https://api.github.com/repos/morph3/crawpy/commits
-        url = f"https://api.github.com/repos/{repository_full_name}/commits" 
-        
+        url = f"https://api.github.com/repos/{repository_full_name}/commits"
+
         # this returns a list of json objects, each one represents a commit
         response = self.do_request(url)
-        
+
         if response.status_code == 200:
             return response.json()
         else:
@@ -70,7 +70,7 @@ class GithubAPIWrapper:
         """
         commits = self.get_commits(repository_full_name)
         tree = commits[0]['commit']['tree']['url'] + "?recursive=1" # https://api.github.com/repos/morph3/crawpy/git/trees/f6bc50e364496e95422b9deb56a17d258c2b2d2c?recursive=1
-        
+
         response = self.do_request(tree)
         file_list = []
         if response.status_code == 200:
@@ -93,7 +93,7 @@ class GithubAPIWrapper:
 
         """
         Get detailed commit information about the given file list and repository.
-        
+
         It returns a dictionary like below,
             key: .gitignore, value: ['morph3']
             key: README.md, value: ['Melih Kaan Yıldız', 'morph3', 'morph3', 'morph3', 'morph3', 'morph3', 'morph3', 'morph3', 'morph3', 'morph3', 'morph3', 'morph3', 'morph3', 'morph3']
@@ -151,6 +151,28 @@ class GithubAPIWrapper:
             except:
                 pass
 
+    def get_contributors(self,repository_full_name):
+
+        page = 1
+        contributors = []
+        while True:
+            url = f"https://api.github.com/repos/{repository_full_name}/contributors?per_page=1000&page="+str(page)+"&anon=1"
+            data = self.do_request(url).json()
+
+            if len(data) == 0:
+                break
+            for element in data:
+                if ("name" not in element):
+                    if ("login" not in element):
+                        break
+                    else:
+                        contributors.append(element["login"])
+                else:
+                    contributors.append(element["name"])
+
+            page+=1
+
+        return contributors
 
 
 if __name__ == "__main__":
@@ -165,7 +187,7 @@ if __name__ == "__main__":
     print(files)
     file_commits = gaw.get_file_commits("morph3/crawpy", files)
     print(file_commits)
-    
+
     file_commits = dict((k, v) for k, v in file_commits.items() if v) # We remove the empty arrays
     print(file_commits)
     for k,v in file_commits.items():
