@@ -246,7 +246,7 @@
                                     })
                                     .then(function(jsonResponse) {
                                         result = jsonResponse;
-                                        console.log(result);
+                                        //console.log(result);
                                         var options = {
                                             series: [result.open_issues, result.closed_issues],
                                             chart: {
@@ -264,6 +264,7 @@
                         </div>
 
                         <div id="commitDistributionChart" class="row">
+
                             <script>
                                 fetch(`http://${window.location.host}/api/get_commit_distribution?r=${repository_name}`)
                                     .then(function(response) {
@@ -279,8 +280,8 @@
                                             contributions.push(result[i].contributions);
                                             usernames.push(result[i].login);
                                         }
-                                        console.log(`Contributions: ${contributions}`);
-                                        console.log(`Usernames: ${usernames}`);
+                                        //console.log(`Contributions: ${contributions}`);
+                                        //console.log(`Usernames: ${usernames}`);
 
 
 
@@ -312,7 +313,60 @@
                                     });
                             </script>
                         </div>
+                        <div id="commitDistributionPieChart" class="row">
+                            <script>
+                                fetch(`http://${window.location.host}/api/get_commit_distribution?r=${repository_name}`)
+                                .then(function(response){
+                                    return response.json();
+                                })
+                                .then(function(jsonResponse){
+                                    resultPie = jsonResponse;
+                                    let contributions = new Array();
+                                    let usernames=new Array();
+                                    jsonResult_lenght=resultPie.length;
 
+                                    for(let i = 0; i < jsonResult_lenght; i++){
+                                        contributions.push(result[i].contributions);
+                                        usernames.push(result[i].login);
+
+                                    }
+                                    console.log(`Contributions_forPieChart: ${contributions}`);
+                                    console.log(`Usernames: ${usernames}`);
+
+
+                                    var options={
+                                        series:contributions,
+                                        chart: {
+                                            width:380,
+                                            type:'pie',
+
+                                        },
+                                        labels:usernames,
+                                        responsive:[{
+                                            breakpoints:480,
+                                            options:{
+                                                chart:{
+                                                    width:200
+                                                },
+                                                legend:{
+                                                    position:'bottom'
+                                                }
+                                            }
+
+                                        }]
+
+                                    };
+                                    let commitDistributionChartSelectorPieChart = document.querySelector("#commitDistributionPieChart");
+                                    var commitDistributionPieChart = new ApexCharts(commitDistributionChartSelectorPieChart, options);
+                                    commitDistributionPieChart.render();
+                             
+
+
+
+                                });
+                            </script>
+
+                        </div>
 
 
                         <!-- end container -->
