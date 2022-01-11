@@ -110,63 +110,74 @@
                                                     force = "true";
                                                 }
                                                 let result;
+                                                let contributors;
 
                                                 let type = $('.truck-factor-selector').val(); // get the currently selected option
                                                 let repository_name = "{{repository_info.full_name}}";
+
+
+
+
                                                 fetch(`${window.location.protocol}//${window.location.host}/api/calculate_truck_factor?t=${type}&r=${repository_name}&force=${force}`)
                                                     .then(function(response) {
                                                         return response.json();
                                                     })
-                                                    .then(function(jsonResponse) {
-                                                        result = jsonResponse;
-                                                        console.log(result);
-                                                        var options = {
-                                                            series: new Array(result.truck_factor).fill(1),
-                                                            chart: {
-                                                                type: 'pie',
-                                                                width: '500px',
-                                                            },
-                                                            labels: result.users,
-                                                        };
-                                                        let tfParagraph = document.querySelector("#truckFactorDevelopersParagraphId");
-                                                        tfParagraph.textContent = "";
-                                                        let i;
-                                                        let user;
-                                                        for (i = 0; i < result.users.length; i++) {
-                                                            user = result.users[i];
-                                                            let paragraph = document.createElement("li");
-                                                            paragraph.innerHTML = `${user}`;
-                                                            tfParagraph.appendChild(paragraph);
-                                                        }
+                                                    .then(function(truckFactorJsonResponse) {
 
-                                                        var truckFactorChart = new ApexCharts(truckFactorChartSelector, options);
-                                                        truckFactorChart.render();
+                                                        result = truckFactorJsonResponse;
 
-                                                        window.dispatchEvent(new Event('resize')); // after the render is done, send a resize event
+                                                        fetch(`${window.location.protocol}//${window.location.host}/api/get_number_of_contributors?r=${repository_name}`)
+                                                            .then(function(response) {
+                                                                return response.json();
+                                                            })
+                                                            .then(function(contributorsJsonResponse) {
+                                                                contributors = contributorsJsonResponse;
 
-                                                        // do something with jsonResponse
+                                                                console.log(`contributors: ${contributors}`);
+                                                                console.log(`contributors.number_of_contributers: ${contributors.number_of_contributers}`);
+
+                                                                contributors = contributorsJsonResponse;
+                                                                console.log(result);
+                                                                console.log(`result.users.length: ${result.users.length}`);
+                                                                console.log(`result.truck_factor: ${result.truck_factor}`);
+                                                                let myArr = new Array();
+                                                                myArr.push(contributors.number_of_contributers - result.truck_factor);
+                                                                myArr.push(result.truck_factor);
+                                                                console.log(myArr);
+                                                                console.log(contributors.number_of_contributers, result.truck_factor);
+                                                                var options = {
+                                                                    // pie chart using number of contributers to the repository and the ones that form the truck factor
+                                                                    series: myArr,
+
+                                                                    chart: {
+                                                                        type: 'pie',
+                                                                        width: '500px',
+                                                                    },
+                                                                    labels: ["Remaining number of contributers", "Contributers that forms the Truck Factor"],
+                                                                };
+
+                                                                console.log(options);
+                                                                let tfParagraph = document.querySelector("#truckFactorDevelopersParagraphId");
+                                                                tfParagraph.textContent = "";
+                                                                let i;
+                                                                let user;
+                                                                for (i = 0; i < result.users.length; i++) {
+                                                                    user = result.users[i];
+                                                                    let paragraph = document.createElement("li");
+                                                                    paragraph.innerHTML = `${user}`;
+                                                                    tfParagraph.appendChild(paragraph);
+                                                                }
+
+                                                                var truckFactorChart = new ApexCharts(truckFactorChartSelector, options);
+                                                                truckFactorChart.render();
+
+                                                                window.dispatchEvent(new Event('resize')); // after the render is done, send a resize event
+
+                                                                // do something with jsonResponse
+                                                            });
                                                     });
-                                            }
-
-
-                                            /*
-                                            // switching to fetch would be better but xhr is easier
-                                            function calculate_truck_factor() {
-                                                let url = "http://{{hostname}}/api/calculate_truck_factor?t=commit&r=morph3/crawpy"
-                                                var xhr = new XMLHttpRequest();
-                                                let result;
-                                                xhr.onreadystatechange = function() {
-                                                    if (this.readyState == 4 && this.status == 200) {
-                                                        result = JSON.parse(this.responseText);
-                                                    }
-                                                }
-                                                xhr.open('GET', url, true);
-                                                xhr.send();
-                                                return result;
 
                                             }
-                                            let result = calculate_truck_factor();
-                                            */
                                         </script>
                                     </p>
                                 </div>
@@ -251,7 +262,7 @@
                                             series: [result.open_issues, result.closed_issues],
                                             chart: {
                                                 type: 'pie',
-                                                width: '500px',
+                                                width: '800px',
                                             },
                                             labels: ["open issues", "closed issues"],
                                         };

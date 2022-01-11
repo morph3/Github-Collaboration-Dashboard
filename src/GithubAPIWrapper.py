@@ -166,7 +166,7 @@ class GithubAPIWrapper:
         page = 1
         contributors = []
         while True:
-            url = f"https://api.github.com/repos/{repository_full_name}/contributors?per_page=1000&page="+str(page)+"&anon=1"
+            url = f"https://api.github.com/repos/{repository_full_name}/contributors?per_page=1000&page={str(page)}"
             data = self.do_request(url).json()
 
             if len(data) == 0:
