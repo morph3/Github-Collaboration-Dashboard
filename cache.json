@@ -48,4 +48,9 @@
     "type": "commit",
     "users": ["Ice3man543", "forgedhallpass", "PD-Team", "Jop Zitman", "sandeep", "mzack", "Mzack9999", "Alexey Zhuchkov", "Ice3man", "Sajad", "LuitelSamikshya", "Rishiraj Sharma", "Sajad Parra"],
     "truck_factor": 13
+}, {
+    "repository_name": "projectdiscovery/nuclei",
+    "type": "heuristic",
+    "users": ["Alexey Zhuchkov", "forgedhallpass", "Sajad", "Ice3man", "Mzack9999", "Ice3man543", "LuitelSamikshya", "Sandeep Singh", "sandeep", "mzack", "kchason", "Pedro L\u00f3pez Mareque", "Pedro Lopez Mareque", "Jop Zitman", "Sajad Parra", "seb", "PD-Team"],
+    "truck_factor": 17
 }]

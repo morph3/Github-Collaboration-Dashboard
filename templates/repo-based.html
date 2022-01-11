@@ -100,8 +100,8 @@
                                             function calculate_truck_factor() {
                                                 window.dispatchEvent(new Event('resize')); // after the render is done, send a resize event
 
-                                                let element = document.querySelector("#truckFactorChart");
-                                                element.textContent = ""; // clear the div before rendering the chart
+                                                let truckFactorChartSelector = document.querySelector("#truckFactorChart");
+                                                truckFactorChartSelector.textContent = ""; // clear the div before rendering the chart
 
                                                 let force = "false";
                                                 if ($('#flexCheckDefault').is(':checked')) {
@@ -125,13 +125,6 @@
                                                                 width: '500px',
                                                             },
                                                             labels: result.users,
-                                                            responsive: [{
-                                                                options: {
-                                                                    legend: {
-                                                                        position: 'bottom'
-                                                                    }
-                                                                }
-                                                            }]
                                                         };
                                                         let tfParagraph = document.querySelector("#truckFactorDevelopersParagraphId");
                                                         tfParagraph.textContent = "";
@@ -144,7 +137,7 @@
                                                             tfParagraph.appendChild(paragraph);
                                                         }
 
-                                                        var truckFactorChart = new ApexCharts(element, options);
+                                                        var truckFactorChart = new ApexCharts(truckFactorChartSelector, options);
                                                         truckFactorChart.render();
 
                                                         window.dispatchEvent(new Event('resize')); // after the render is done, send a resize event
@@ -239,190 +232,92 @@
                 </div>
 
                 <div class="tab-pane fade" id="chart" role="tabpanel" aria-labelledby="chart-tab">
-                    Posuere urna nec tincidunt praesent semper feugiat. Nunc mattis enim ut tellus elementum sagittis vitae et. Proin libero nunc consequat interdum varius sit amet mattis vulputate. Amet nulla facilisi morbi tempus iaculis urna id volutpat. Enim nulla aliquet
-                    porttitor lacus luctus accumsan. Natoque penatibus et magnis dis parturient montes nascetur ridiculus mus. At augue eget arcu dictum varius. Dignissim enim sit amet venenatis urna cursus eget nunc scelerisque. Aliquam ut porttitor
-                    leo a diam sollicitudin tempor. Bibendum neque egestas congue quisque egestas diam in arcu cursus. Tincidunt vitae semper quis lectus nulla. Diam sollicitudin tempor id eu nisl nunc mi. Blandit volutpat maecenas volutpat blandit aliquam
-                    etiam erat. Aliquet bibendum enim facilisis gravida neque convallis a.
 
+                    <div class="container">
 
-                    <div class="row">
-                        <div class="col-md-6">
-
-                            <div id="exampleChart">
-                                <script>
-                                    var options = {
-                                        series: [{
-                                            data: [100, 21, 11, 5, 22, 43, 21]
-                                        }, {
-                                            data: [53, 32, 33, 52, 13, 44, 32]
-                                        }],
-                                        chart: {
-                                            type: 'bar',
-                                            height: 430
-                                        },
-                                        plotOptions: {
-                                            bar: {
-                                                horizontal: true,
-                                                dataLabels: {
-                                                    position: 'top',
-                                                },
-                                            }
-                                        },
-                                        dataLabels: {
-                                            enabled: true,
-                                            offsetX: -6,
-                                            style: {
-                                                fontSize: '12px',
-                                                colors: ['#fff']
-                                            }
-                                        },
-                                        stroke: {
-                                            show: true,
-                                            width: 1,
-                                            colors: ['#fff']
-                                        },
-                                        tooltip: {
-                                            shared: true,
-                                            intersect: false
-                                        },
-                                        xaxis: {
-                                            categories: [2001, 2002, 2003, 2004, 2005, 2006, 2007],
-                                        },
-                                    };
-                                    var exampleChart = new ApexCharts(document.querySelector("#exampleChart"), options);
-                                    exampleChart.render();
-                                </script>
-                            </div>
+                        <div id="issueChart" class="row">
+                            <script>
+                                let repository_name = "{{repository_info.full_name}}";
+                                fetch(`http://${window.location.host}/api/get_issues?r=${repository_name}`)
+                                    .then(function(response) {
+                                        return response.json();
+                                    })
+                                    .then(function(jsonResponse) {
+                                        result = jsonResponse;
+                                        console.log(result);
+                                        var options = {
+                                            series: [result.open_issues, result.closed_issues],
+                                            chart: {
+                                                type: 'pie',
+                                                width: '500px',
+                                            },
+                                            labels: ["open issues", "closed issues"],
+                                        };
+                                        let issueChartSelector = document.querySelector("#issueChart");
+                                        var issueChart = new ApexCharts(issueChartSelector, options);
+                                        issueChart.render();
+                                        window.dispatchEvent(new Event('resize')); // after the render is done, send a resize event
+                                    });
+                            </script>
                         </div>
-                        <div class="col-md-6">
-                            <div id="exampleChart2">
-                                <script>
-                                    var options = {
-                                        series: [{
-                                            name: 'Income',
-                                            type: 'column',
-                                            data: [1.4, 2, 2.5, 1.5, 2.5, 2.8, 3.8, 4.6]
-                                        }, {
-                                            name: 'Cashflow',
-                                            type: 'column',
-                                            data: [1.1, 3, 3.1, 4, 4.1, 4.9, 6.5, 8.5]
-                                        }, {
-                                            name: 'Revenue',
-                                            type: 'line',
-                                            data: [20, 29, 37, 36, 44, 45, 50, 58]
-                                        }],
-                                        chart: {
-                                            height: 350,
-                                            type: 'line',
-                                            stacked: false
-                                        },
-                                        dataLabels: {
-                                            enabled: false
-                                        },
-                                        stroke: {
-                                            width: [1, 1, 4]
-                                        },
-                                        title: {
-                                            text: 'XYZ - Stock Analysis (2009 - 2016)',
-                                            align: 'left',
-                                            offsetX: 110
-                                        },
-                                        xaxis: {
-                                            categories: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016],
-                                        },
-                                        yaxis: [{
-                                            axisTicks: {
-                                                show: true,
-                                            },
-                                            axisBorder: {
-                                                show: true,
-                                                color: '#008FFB'
-                                            },
-                                            labels: {
-                                                style: {
-                                                    colors: '#008FFB',
-                                                }
-                                            },
-                                            title: {
-                                                text: "Income (thousand crores)",
-                                                style: {
-                                                    color: '#008FFB',
-                                                }
-                                            },
-                                            tooltip: {
-                                                enabled: true
-                                            }
-                                        }, {
-                                            seriesName: 'Income',
-                                            opposite: true,
-                                            axisTicks: {
-                                                show: true,
-                                            },
-                                            axisBorder: {
-                                                show: true,
-                                                color: '#00E396'
-                                            },
-                                            labels: {
-                                                style: {
-                                                    colors: '#00E396',
-                                                }
-                                            },
-                                            title: {
-                                                text: "Operating Cashflow (thousand crores)",
-                                                style: {
-                                                    color: '#00E396',
-                                                }
-                                            },
-                                        }, {
-                                            seriesName: 'Revenue',
-                                            opposite: true,
-                                            axisTicks: {
-                                                show: true,
-                                            },
-                                            axisBorder: {
-                                                show: true,
-                                                color: '#FEB019'
-                                            },
-                                            labels: {
-                                                style: {
-                                                    colors: '#FEB019',
-                                                },
-                                            },
-                                            title: {
-                                                text: "Revenue (thousand crores)",
-                                                style: {
-                                                    color: '#FEB019',
-                                                }
-                                            }
-                                        }, ],
-                                        tooltip: {
-                                            fixed: {
-                                                enabled: true,
-                                                position: 'topLeft', // topRight, topLeft, bottomRight, bottomLeft
-                                                offsetY: 30,
-                                                offsetX: 60
-                                            },
-                                        },
-                                        legend: {
-                                            horizontalAlign: 'left',
-                                            offsetX: 40
+
+                        <div id="commitDistributionChart" class="row">
+                            <script>
+                                fetch(`http://${window.location.host}/api/get_commit_distribution?r=${repository_name}`)
+                                    .then(function(response) {
+                                        return response.json();
+                                    })
+                                    .then(function(jsonResponse) {
+                                        result = jsonResponse;
+                                        console.log(result);
+                                        let contributions = new Array();
+                                        let usernames = new Array();
+
+                                        for (let i = 0; i < result.length; i++) {
+                                            contributions.push(result[i].contributions);
+                                            usernames.push(result[i].login);
                                         }
-                                    };
+                                        console.log(`Contributions: ${contributions}`);
+                                        console.log(`Usernames: ${usernames}`);
 
-                                    var exampleChart2 = new ApexCharts(document.querySelector("#exampleChart2"), options);
-                                    exampleChart2.render();
-                                </script>
-                            </div>
+
+
+                                        var options = {
+                                            series: [{
+                                                data: contributions
+                                            }],
+                                            chart: {
+                                                type: 'bar',
+                                                height: 350
+                                            },
+                                            dataLabels: {
+                                                enabled: false
+                                            },
+                                            xaxis: {
+                                                categories: usernames,
+                                            },
+                                            yaxis: {
+                                                title: {
+                                                    text: 'Number of commits'
+                                                }
+                                            },
+                                        };
+
+                                        let commitDistributionChartSelector = document.querySelector("#commitDistributionChart");
+                                        var commitDistributionChart = new ApexCharts(commitDistributionChartSelector, options);
+                                        commitDistributionChart.render();
+                                        //window.dispatchEvent(new Event('resize')); // after the render is done, send a resize event
+                                    });
+                            </script>
                         </div>
+
+
+
+                        <!-- end container -->
                     </div>
 
-                    <div class="col-md-12">
-                        <img class="img-fluid rounded-circle" src="https://static.pingendo.com/img-placeholder-3.svg" width="200" height="200">
-                        <img class="img-fluid rounded-circle" src="https://static.pingendo.com/img-placeholder-3.svg" width="200" height="200">
-                    </div>
 
-
-
+                    <!-- end tab pane-->
                 </div>
 
             </div>
@@ -431,14 +326,14 @@
     </div>
     <script>
         /* 
-                hide.bs.tab is emitted on the currently active tab when we hide it.
-                show.bs.tab is emitted on the to be shown tab when we click on it.
-                hidden.bs.tab is emitted on the previous active tab is we hid that tab
-        */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                hide.bs.tab is emitted on the currently active tab when we hide it.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                show.bs.tab is emitted on the to be shown tab when we click on it.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                hidden.bs.tab is emitted on the previous active tab is we hid that tab
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        */
 
         $("#myTab").on('shown.bs.tab', function(e) { // tabs on bootstrap emit shown event
 
-            window.dispatchEvent(new Event('resize'));
+            //window.dispatchEvent(new Event('resize'));
             // on tab change, we need to send a resize event or, gracefully, the charts won't render
         });
 

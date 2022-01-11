@@ -296,12 +296,12 @@ class GithubAPIWrapper:
         #https://api.github.com/repos/projectdiscovery/nuclei/contributors
         
         # this per_page is a temporary fix, it might get f'd up with repositories that have huge number of contributors
-        url = f"https://api.github.com/repos/{repository_full_name}/contributors&per_page=1000"
+        url = f"https://api.github.com/repos/{repository_full_name}/contributors?per_page=1000"
         response = self.do_request(url)
 
         """
-        response["login] is the username
-        response["contributions] is the number of contributions
+        response["login"] is the username
+        response["contributions"] is the number of contributions
         """
 
         if response.status_code== 200:

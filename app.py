@@ -15,7 +15,6 @@ ENV = {}
 TRUCK_FACTOR_CACHE = ""
 CACHE_FILE = None
 CACHE_NAME = "cache.json"
-HOSTNAME = "localhost:5000"
 
 def dot_env_parser():
     f = open(".env","r").read()
@@ -76,14 +75,14 @@ def repository_search():
     number_of_commits = gaw.get_commit_count(repository_full_name, lc)
 
     repository_info["number_of_commits"] = number_of_commits # not a good solution but, let's just append it for now
-    return flask.render_template('repo-based.html', repository_info=repository_info, hostname=HOSTNAME)
+    return flask.render_template('repo-based.html', repository_info=repository_info)
 
 
 @app.route('/user')
 def user_search():
     username = flask.request.args.get('u')
     repos = gaw.get_repositories(username)
-    return flask.render_template('user-based.html', username=username, repositories=repos, hostname=HOSTNAME)
+    return flask.render_template('user-based.html', username=username, repositories=repos)
 
 
 @app.route('/api/get_repository_info')
@@ -257,6 +256,9 @@ def get_commit_distribution():
 
 
 
+@app.route('/test')
+def test():
+    return flask.render_template('test.html')
 
 
 
