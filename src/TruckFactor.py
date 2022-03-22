@@ -8,19 +8,29 @@ except:
 import time
 import json
 
+
 class TruckFactorCalculator:
-    def __init__(self,gaw):
-        self.gaw = gaw # GithubAPIWrapper object
+    """ TruckFactorCalculator class is used to calculate the TruckFactor for a given repository.
+
+    """
+
+    def __init__(self, gaw):
+        """Constructor for the TruckFactorCalculator class
+
+        Args:
+            gaw (_type_): class initialized with GithubAPIWrapper
+        """
+        self.gaw = gaw  # GithubAPIWrapper object
         pass
 
     # Src: A Novel Approach for Estimating Truck Factors - Guilherme Avelino, Leonardo Passos, Andre Hora and Marco Tulio Valente
-    def commit_based_truck_factor(self,repository_full_name):
+    def commit_based_truck_factor(self, repository_full_name):
         """
         Calculates the commit based truck factor for a given repository
 
         :param repository_full_name: The full name of the repository
         :return: a json object that has entries, truck factor result, repository full name, users that form the truck factor and truck factor type, 
-        
+
         Ex:
         {
             "repository-name": "apexcharts/apexcharts.js",
@@ -31,38 +41,39 @@ class TruckFactorCalculator:
         """
 
         # those prints can stay here as they are not leaked to outside
-        print(f"Calculating commit based truck factor for repository: {repository_full_name}")
+        print(
+            f"Calculating commit based truck factor for repository: {repository_full_name}")
         start_time = time.time()
         file_list = self.gaw.get_files(repository_full_name)
         end_time = time.time()
         print(f"Time taken to get file list: {end_time-start_time}")
 
-
-
         start_time = time.time()
-        file_commits = self.gaw.get_file_commits(repository_full_name, file_list)
+        file_commits = self.gaw.get_file_commits(
+            repository_full_name, file_list)
         end_time = time.time()
         print(f"Time taken to get file commits: {end_time-start_time}")
 
+        # We remove the empty arrays
+        file_commits = dict((k, v) for k, v in file_commits.items() if v)
 
-        file_commits = dict((k, v) for k, v in file_commits.items() if v) # We remove the empty arrays
-
-        changeCount = {} # Number of commits of users
-        fileCreator = {} # Creator of each file
+        changeCount = {}  # Number of commits of users
+        fileCreator = {}  # Creator of each file
 
         # k is the file name
         # v[i] is the each user that commited
         for k, v in file_commits.items():
             changeCount[k] = {}
-            for i in range(0,len(v)):
+            for i in range(0, len(v)):
                 try:
                     changeCount[k][v[i]] += 1
                 except:
                     changeCount[k][v[i]] = 1
-                if i == (len(v) - 1): # Assumed first commited user is creator of file. Because of structure of json it is the last element
+                # Assumed first commited user is creator of file. Because of structure of json it is the last element
+                if i == (len(v) - 1):
                     fileCreator[k] = v[i]
 
-        changeCountExcept = {} # Number of commits except current user
+        changeCountExcept = {}  # Number of commits except current user
         # k is the file name
         # key and a are the user names
         # b is the number of commits of user
@@ -71,11 +82,11 @@ class TruckFactorCalculator:
             for key in v.keys():
                 changeCountExcept[k][key] = 0
                 for a, b in v.items():
-                    if a != key: # Because of we need other user's commit count. We don't include current user
+                    if a != key:  # Because of we need other user's commit count. We don't include current user
                         changeCountExcept[k][key] += changeCount[k][a]
 
-        doaValue = {} # Degree Of Author. Formula is from A_novel_approach_for_estimating_Truck_Factors.pdf
-        totalDoa = {} # We need total doa of each file to normalize data
+        doaValue = {}  # Degree Of Author. Formula is from A_novel_approach_for_estimating_Truck_Factors.pdf
+        totalDoa = {}  # We need total doa of each file to normalize data
         totalFileCount = 0
         for k, v in changeCount.items():
             totalFileCount += 1
@@ -85,7 +96,8 @@ class TruckFactorCalculator:
                     fa = 1
                 else:
                     fa = 0
-                doaValue[k][a] = 3.293 + (1.098 * fa) + (0.164 * changeCount[k][a]) - (0.321 * math.log(1 + changeCountExcept[k][a]))
+                doaValue[k][a] = 3.293 + (1.098 * fa) + (0.164 * changeCount[k][a]) - (
+                    0.321 * math.log(1 + changeCountExcept[k][a]))
                 # This formula is from pdf
                 try:
                     totalDoa[k] = totalDoa[k] + doaValue[k][a]
@@ -96,12 +108,11 @@ class TruckFactorCalculator:
         for k, v in changeCount.items():
             for a, b in v.items():
                 normalizeDoa = doaValue[k][a] / totalDoa[k]
-                if normalizeDoa >= 0.75: # This threshold is from pdf. If normalizedDoa is above our threshold then we count the user as author of that file
+                if normalizeDoa >= 0.75:  # This threshold is from pdf. If normalizedDoa is above our threshold then we count the user as author of that file
                     try:
                         authoredFiles[a] += 1
                     except:
                         authoredFiles[a] = 1
-
 
         sortedAuthoredFiles = {}
         for x in sorted(authoredFiles.items(), key=lambda a: a[1], reverse=True):
@@ -109,10 +120,11 @@ class TruckFactorCalculator:
 
         truckFactor = []
         coverage = 0
-        for k,v in sortedAuthoredFiles.items():
+        for k, v in sortedAuthoredFiles.items():
             truckFactor.append(k)
             coverage += v
-            if coverage > (totalFileCount / 2): #If we looked half of the files than we break
+            # If we looked half of the files than we break
+            if coverage > (totalFileCount / 2):
                 break
 
         print(f"Truck Factor: {truckFactor}, length: {len(truckFactor)}")
@@ -125,7 +137,7 @@ class TruckFactorCalculator:
         return entry
 
     # Src: Assessing the bus factor of Git repositories - Valerio Cosentino, Javier Cánovas Izquierdo, Jordi Cabot
-    def heuristic_based_truck_factor(self,repository_full_name):
+    def heuristic_based_truck_factor(self, repository_full_name):
         """
         Calculates the heuristic based truck factor for a given repository
 
@@ -134,39 +146,41 @@ class TruckFactorCalculator:
         """
 
         # those prints can stay here as they are not leaked to outside
-        print(f"Calculating heuristic based truck factor for repository: {repository_full_name}")
+        print(
+            f"Calculating heuristic based truck factor for repository: {repository_full_name}")
         start_time = time.time()
         file_list = self.gaw.get_files(repository_full_name)
         end_time = time.time()
         print(f"Time taken to get file list: {end_time-start_time}")
 
-
-
         start_time = time.time()
-        file_commits = self.gaw.get_file_commits(repository_full_name, file_list)
+        file_commits = self.gaw.get_file_commits(
+            repository_full_name, file_list)
         end_time = time.time()
         print(f"Time taken to get file commits: {end_time-start_time}")
 
+        # We remove the empty arrays
+        file_commits = dict((k, v) for k, v in file_commits.items() if v)
 
-        file_commits = dict((k, v) for k, v in file_commits.items() if v) # We remove the empty arrays
-
-        changeCount = {} # Number of commits of users
+        changeCount = {}  # Number of commits of users
 
         # k is the file name
         # v[i] is the each user that commited
         for k, v in file_commits.items():
             changeCount[k] = {}
-            for i in range(0,len(v)):
+            for i in range(0, len(v)):
                 try:
                     changeCount[k][v[i]] += 1
                 except:
                     changeCount[k][v[i]] = 1
 
-        totalCommitCount = {} # Total commit count of a file
-        knowledgeOfFile = {} # User's knowledge of file is (total commit count of user) / (total commit count of file)
+        totalCommitCount = {}  # Total commit count of a file
+        # User's knowledge of file is (total commit count of user) / (total commit count of file)
+        knowledgeOfFile = {}
         primaryDeveloper = {}
         secondaryDeveloper = {}
-        ownership = {} # Ownership = totalCountOfPrimaryDeveloper + (totalCountOfSecondaryDeveloper)/2
+        # Ownership = totalCountOfPrimaryDeveloper + (totalCountOfSecondaryDeveloper)/2
+        ownership = {}
         # k is the file name
         # v[i] is the each user that commited
         totalFileCount = 0
@@ -177,10 +191,13 @@ class TruckFactorCalculator:
             secondaryDeveloper[k] = []
             for name, count in v.items():
                 totalCommitCount[k] += count
-            primaryThreshold = 1 / float(len(v))        # Threshold to be primary developer. 1 / (total user count of file)
-            secondaryThreshold = primaryThreshold / 2   # Threshold to be secondary developer
+            # Threshold to be primary developer. 1 / (total user count of file)
+            primaryThreshold = 1 / float(len(v))
+            # Threshold to be secondary developer
+            secondaryThreshold = primaryThreshold / 2
             for name, count in v.items():
-                knowledgeOfFile[name] = float(changeCount[k][name]) / float(totalCommitCount[k])
+                knowledgeOfFile[name] = float(
+                    changeCount[k][name]) / float(totalCommitCount[k])
                 if knowledgeOfFile[name] >= primaryThreshold:
                     primaryDeveloper[k].append(name)
                     try:
@@ -196,7 +213,8 @@ class TruckFactorCalculator:
 
         totalUserCount = len(ownership)
         print("Number of people: " + str(totalUserCount))
-        truckFactorThreshold = totalFileCount / totalUserCount   # This threshold is based on observation only. There is no evidence about it. It can be changed if a better threshold is found
+        # This threshold is based on observation only. There is no evidence about it. It can be changed if a better threshold is found
+        truckFactorThreshold = totalFileCount / totalUserCount
         truckFactor = []
 
         for name, ownDegree in ownership.items():
@@ -212,17 +230,18 @@ class TruckFactorCalculator:
 
         return entry
 
-if __name__ == "__main__":
-    token = open("../.env","r").read().split("=")[1].strip()
-    gaw = GithubAPIWrapper(token)
 
+if __name__ == "__main__":
+    token = open("../.env", "r").read().split("=")[1].strip()
+    gaw = GithubAPIWrapper(token)
 
     tfc = TruckFactorCalculator(gaw)
 
     start_time = time.time()
     tfc.commit_based_truck_factor("morph3/crawpy")
     end_time = time.time()
-    print(f"Time taken to calculate repo 'morph3/crawpy': {end_time - start_time}")
+    print(
+        f"Time taken to calculate repo 'morph3/crawpy': {end_time - start_time}")
 
     """
 
@@ -251,7 +270,6 @@ if __name__ == "__main__":
     print(f"Time taken to calculate repo 'SerenityOS/serenity': {end_time - start_time}")
 
     """
-
 
     # before optimization
     """
