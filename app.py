@@ -9,6 +9,7 @@ from collections import Counter
 from src.TruckFactor import TruckFactorCalculator
 from src.GithubAPIWrapper import GithubAPIWrapper
 
+# TEST
 
 # global variables
 ENV = {}
@@ -39,20 +40,20 @@ def check_cache(repo_name, type):
 
 def update_cache(entry):
 
-    # if the cache is empty    
+    # if the cache is empty
     if TRUCK_FACTOR_CACHE == "":
         CACHE_FILE = open(CACHE_NAME, "w")
         CACHE_FILE.write(entry)
         CACHE_FILE.close()
 
-    # append the given entry(dict)    
+    # append the given entry(dict)
     TRUCK_FACTOR_CACHE.append(entry)
     CACHE_FILE = open(CACHE_NAME, "w")
     CACHE_FILE.write(json.dumps(TRUCK_FACTOR_CACHE))
 
     # remove the oldest entry
     # TODO: remove the oldest entry in the cache
-    return        
+    return
 
 
 app = flask.Flask(__name__)
@@ -73,9 +74,9 @@ def repository_search():
     commits = gaw.get_commits(repository_full_name)
     lc = gaw.get_last_commit(repository_full_name)
     number_of_commits = gaw.get_commit_count(repository_full_name, lc)
-    
+
     issue_info=gaw.get_issues(repository_full_name)
-    
+
     repository_info["number_of_commits"] = number_of_commits # not a good solution but, let's just append it for now
     repository_info["open_issues"] = issue_info["open_issues"] # not a good solution but, let's just append it for now
     repository_info["closed_issues"] = issue_info["closed_issues"] # not a good solution but, let's just append it for now
@@ -151,8 +152,8 @@ def calculate_truck_factor():
     is_force = flask.request.args.get('force')
     print(f"Is force: {is_force}")
     cached_entry = check_cache(repository_full_name, type)
-    
-    
+
+
     tfc = TruckFactorCalculator(gaw)
 
     if type == "commit":
@@ -163,8 +164,8 @@ def calculate_truck_factor():
             update_cache(result)
             # do the caching
         else:
-            # if the is force is not set, 
-            # 
+            # if the is force is not set,
+            #
             #check if the tf is in the cache
             if(cached_entry):
                 print(f"We hit the cache with: {cached_entry}")
@@ -173,25 +174,25 @@ def calculate_truck_factor():
             else:
                 result = tfc.commit_based_truck_factor(repository_full_name)
                 update_cache(result)
-        
+
         print(f"Returning {json.dumps(result)}")
         return json.dumps(result), {"Content-Type":"application/json"} # result should already be in the format of json
-        
+
     elif type == "blame":
         return "{\"error\": \"blame not implemented yet\"}"
-    
-    
-    
+
+
+
     elif type == "heuristic":
-        
+
         # if is_force is set to true, calculate the tf and cache it
         if (is_force == "true"):
             result = tfc.heuristic_based_truck_factor(repository_full_name)
             update_cache(result)
             # do the caching
         else:
-            # if the is force is not set, 
-            # 
+            # if the is force is not set,
+            #
             #check if the tf is in the cache
             if(cached_entry):
                 result = cached_entry
@@ -202,21 +203,21 @@ def calculate_truck_factor():
         return json.dumps(result) , {"Content-Type":"application/json"} # result should already be in the format of json
     return "{\"error\": \"Given truck factor is not found\"}"
 
-  
+
 @app.route('/api/get_issues')
 def get_issues():
     """
     Args:
     r: Repo full name
-    
-    Return: 
+
+    Return:
     issues: a list of issues in json format, it should include an entry for each issue whether it is closed or not
     it can have more additional entries as well
     """
     repo_full_name = flask.request.args.get('r')
-    
+
     issues= gaw.get_issues(repo_full_name)
-    
+
     return json.dumps(issues), {"Content-Type":"application/json"}
 
 @app.route('/api/get_branches')
@@ -224,7 +225,7 @@ def get_branches():
     """
     Args:
     r: repository full name
-    
+
     Return:
     branch_names : a list of json objects where each object contains the name of the branch, commit and protected field
     """
@@ -232,9 +233,9 @@ def get_branches():
 
 
     repo_full_name = flask.request.args.get('r')
-    
+
     branch_names= gaw.get_all_branch_names(repo_full_name)
-    
+
     return json.dumps(branch_names), {"Content-Type":"application/json"}
 
 
@@ -243,17 +244,17 @@ def get_commit_distribution():
     # https://api.github.com/repos/projectdiscovery/nuclei/contributors
 
     """
-    Args: 
+    Args:
     r: Repo full name
-    
-    :Return 
+
+    :Return
     commit_distribution: a json object, it should contain a list users and their commit count
     """
 
     repo_full_name = flask.request.args.get('r')
-    
+
     contributions = gaw.get_contributions(repo_full_name)
-    
+
     return json.dumps(contributions), {"Content-Type":"application/json"}
 
 
@@ -286,7 +287,7 @@ if __name__ == '__main__':
 
     # if the cache.json file exists, load it
     if os.path.exists(CACHE_NAME):
-        CACHE_FILE = open(CACHE_NAME,"r") # array of json objects 
+        CACHE_FILE = open(CACHE_NAME,"r") # array of json objects
         TRUCK_FACTOR_CACHE = json.loads(CACHE_FILE.read())
 
 
