@@ -193,7 +193,7 @@
                                         <select class="truck-factor-selector" onchange="update_truck_factor_info(this.selectedIndex);">
                                             <option value="commit">Commit based truck factor</option>
                                             <option value="heuristic">Heuristic based truck factor</option>
-                                            <option value="blame">Blame based truck factor</option>
+                                            <option value="stack">Stack based truck factor</option>
                                           </select>
 
 
@@ -390,8 +390,8 @@
 
         /*
         click emits the event immediately however we should be waiting for fetch to be finished
-        
-        $("#truckFactorCalculateButton").on('click', function(e) { // if we click on the calculate button, 
+
+        $("#truckFactorCalculateButton").on('click', function(e) { // if we click on the calculate button,
             console.log("Clicked on the truckFactorCalculateButton")
             window.dispatchEvent(new Event('resize')); // send a resize event
         });
@@ -399,7 +399,7 @@
 
         // . is class
         // # is id
-        /* 
+        /*
 hide.bs.tab is emitted on the currently active tab when we hide it.
 show.bs.tab is emitted on the to be shown tab when we click on it.
 hidden.bs.tab is emitted on the previous active tab is we hid that tab
