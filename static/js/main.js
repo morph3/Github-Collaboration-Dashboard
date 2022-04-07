@@ -58,7 +58,11 @@ function update_truck_factor_info(idx) {
         elem.innerHTML = str;
 
     } else if (idx == 2) {
-        elem.innerHTML = "Blame based truck factor";
+      let str = "Stack based truck factor, determines how many commits each user has on all files, and it assigns a Degree of Author value to each user for each file. If a user has enough degree of author value, it puts that user in the truck factor list.";
+      str += "<br>"
+      str += "This truck factor is calculated based on modified version of the commit based truck factor.";
+      str += "<br>"
+      elem.innerHTML = str;
 
     }
 
