@@ -29,7 +29,11 @@ class TruckFactorCalculator:
         Calculates the commit based truck factor for a given repository
 
         :param repository_full_name: The full name of the repository
+<<<<<<< Updated upstream
         :return: a json object that has entries, truck factor result, repository full name, users that form the truck factor and truck factor type, 
+=======
+        :return: a json object that has entries, truck factor result, repository full name, users that form the truck factor and truck factor type,
+>>>>>>> Stashed changes
 
         Ex:
         {
@@ -230,6 +234,106 @@ class TruckFactorCalculator:
 
         return entry
 
+<<<<<<< Updated upstream
+=======
+    def stack_based_truck_factor(self,repository_full_name):
+        """
+        Calculates the stack based truck factor for a given repository
+
+        :param repository_full_name: The full name of the repository
+        :return: array of users that build the truck factor
+        """
+        # those prints can stay here as they are not leaked to outside
+        print(f"Calculating stack based truck factor for repository: {repository_full_name}")
+        start_time = time.time()
+        file_list = self.gaw.get_files(repository_full_name)
+        end_time = time.time()
+        print(f"Time taken to get file list: {end_time-start_time}")
+
+        start_time = time.time()
+        file_commits = self.gaw.get_file_commits(repository_full_name, file_list)
+        end_time = time.time()
+        print(f"Time taken to get file commits: {end_time-start_time}")
+
+        file_commits = dict((k, v) for k, v in file_commits.items() if v) # We remove the empty arrays
+
+        changeCount = {} # Number of commits of users
+        fileCreator = {} # Creator of each file
+
+        # k is the file name
+        # v[i] is the each user that commited
+        for k, v in file_commits.items():
+            changeCount[k] = {}
+            for i in range(0,len(v)):
+                try:
+                    changeCount[k][v[i]] += 1
+                except:
+                    changeCount[k][v[i]] = 1
+                if i == (len(v) - 1): # Assumed first commited user is creator of file. Because of structure of json it is the last element
+                    fileCreator[k] = v[i]
+
+        changeCountExcept = {} # Number of commits except current user
+        # k is the file name
+        # key and a are the user names
+        # b is the number of commits of user
+        for k, v in changeCount.items():
+            changeCountExcept[k] = {}
+            for key in v.keys():
+                changeCountExcept[k][key] = 0
+                for a, b in v.items():
+                    if a != key: # Because of we need other user's commit count. We don't include current user
+                        changeCountExcept[k][key] += changeCount[k][a]
+
+        doaValue = {} # Degree Of Author. Formula is from A_novel_approach_for_estimating_Truck_Factors.pdf
+        totalDoa = {} # We need total doa of each file to normalize data
+        totalFileCount = 0
+        for k, v in changeCount.items():
+            totalFileCount += 1
+            doaValue[k] = {}
+            for a, b in v.items():
+                if a == fileCreator[k]:
+                    fa = 1
+                else:
+                    fa = 0
+                doaValue[k][a] = 3.293 + (1.098 * fa) + (0.164 * changeCount[k][a]) - (0.321 * math.log(1 + changeCountExcept[k][a]))
+                # This formula is from pdf
+                try:
+                    totalDoa[k] = totalDoa[k] + doaValue[k][a]
+                except:
+                    totalDoa[k] = doaValue[k][a]
+
+        authoredFiles = {}
+        normalizeDoaTotal = {}
+        for k, v in changeCount.items():
+            for a, b in v.items():
+                try:
+                    normalizeDoaTotal[a] = normalizeDoaTotal[a] + (doaValue[k][a] / totalDoa[k])
+                except:
+                    normalizeDoaTotal[a] = doaValue[k][a] / totalDoa[k]
+
+
+        sortedNormalizeDoa = {}
+        for x in sorted(normalizeDoaTotal.items(), key=lambda a: a[1], reverse=True):
+            sortedNormalizeDoa[x[0]] = normalizeDoaTotal[x[0]]
+
+        truckFactor = []
+        coverage = 0
+        for k,v in sortedNormalizeDoa.items():
+            truckFactor.append(k)
+            coverage += v
+            if coverage > (totalFileCount / 2): #If we looked half of the files than we break
+                break
+
+        print(f"Truck Factor: {truckFactor}, length: {len(truckFactor)}")
+        entry = {}
+        entry["repository_name"] = repository_full_name
+        entry["type"] = "stack"
+        entry["users"] = truckFactor
+        entry["truck_factor"] = len(truckFactor)
+
+        return entry
+
+>>>>>>> Stashed changes
 
 if __name__ == "__main__":
     token = open("../.env", "r").read().split("=")[1].strip()

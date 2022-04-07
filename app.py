@@ -224,9 +224,12 @@ def calculate_truck_factor():
         # result should already be in the format of json
         return json.dumps(result), {"Content-Type": "application/json"}
 
+<<<<<<< Updated upstream
     elif type == "blame":
         return "{\"error\": \"blame not implemented yet\"}"
 
+=======
+>>>>>>> Stashed changes
     elif type == "heuristic":
 
         # if is_force is set to true, calculate the tf and cache it
@@ -244,8 +247,32 @@ def calculate_truck_factor():
             else:
                 result = tfc.heuristic_based_truck_factor(repository_full_name)
                 update_cache(result)
+<<<<<<< Updated upstream
         # result should already be in the format of json
         return json.dumps(result), {"Content-Type": "application/json"}
+=======
+        return json.dumps(result) , {"Content-Type":"application/json"} # result should already be in the format of json
+
+    elif type == "stack":
+
+        # if is_force is set to true, calculate the tf and cache it
+        if (is_force == "true"):
+            result = tfc.stack_based_truck_factor(repository_full_name)
+            update_cache(result)
+            # do the caching
+        else:
+            # if the is force is not set,
+            #
+            #check if the tf is in the cache
+            if(cached_entry):
+                result = cached_entry
+            # if it's not in the cache, calculate it and cache it
+            else:
+                result = tfc.stack_based_truck_factor(repository_full_name)
+                update_cache(result)
+        return json.dumps(result) , {"Content-Type":"application/json"} # result should already be in the format of json
+
+>>>>>>> Stashed changes
     return "{\"error\": \"Given truck factor is not found\"}"
 
 # Endpoint to get issues for a given repository
