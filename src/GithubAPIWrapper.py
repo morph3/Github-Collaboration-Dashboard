@@ -9,10 +9,13 @@ Resources about Github REST API
 https://docs.github.com/en/rest/overview/resources-in-the-rest-api#pagination
 
 """
+
+
 class GithubAPIWrapper:
     """
     This is our own Github API Wrapper to make things easy
     """
+
     def __init__(self, token):
         self.token = token
         self.file_commits = {}
@@ -20,13 +23,13 @@ class GithubAPIWrapper:
     def do_request(self, url):
         return requests.get(url, headers={'Authorization': f"token {self.token}"})
 
-
     def get_repository(self, repository_full_name):
         """
         Get information about the given repository
         """
 
-        url = f"https://api.github.com/repos/{repository_full_name}" # Ex, https://api.github.com/repos/morph3/crawpy
+        # Ex, https://api.github.com/repos/morph3/crawpy
+        url = f"https://api.github.com/repos/{repository_full_name}"
 
         response = self.do_request(url)
         """
@@ -44,7 +47,7 @@ class GithubAPIWrapper:
     def get_commits(self, repository_full_name):
         """
         Get a list of commits for a given repository.
-        
+
         https://docs.github.com/en/rest/overview/resources-in-the-rest-api#pagination
         https://blog.notfoss.com/posts/get-total-number-of-commits-for-a-repository-using-the-github-api/
         """
@@ -79,12 +82,13 @@ class GithubAPIWrapper:
         ['.gitignore', 'README.md', 'common.txt', 'crawpy.py', 'reports/template.html', 'requirements.txt', 'src/Banner.py', 'src/RequestEngine.py', 'src/__init__.py', 'src/config.py']
         """
         commits = self.get_commits(repository_full_name)
-        tree = commits[0]['commit']['tree']['url'] + "?recursive=1" # https://api.github.com/repos/morph3/crawpy/git/trees/f6bc50e364496e95422b9deb56a17d258c2b2d2c?recursive=1
+        # https://api.github.com/repos/morph3/crawpy/git/trees/f6bc50e364496e95422b9deb56a17d258c2b2d2c?recursive=1
+        tree = commits[0]['commit']['tree']['url'] + "?recursive=1"
 
         response = self.do_request(tree)
         file_list = []
         if response.status_code == 200:
-            #print(response.json())
+            # print(response.json())
             for file in response.json()["tree"]:
                 if file["type"] == "blob":
                     file_list.append(file["path"])
@@ -119,12 +123,13 @@ class GithubAPIWrapper:
 
         #url_base = f"https://api.github.com/repos/{repository_full_name}/commits?path="
 
-        self.file_commits = {} # make sure its empty
+        self.file_commits = {}  # make sure its empty
 
         thread_list = []
         n_threads = 50
         for t in range(n_threads):
-            t = threading.Thread(target=self.get_file_commits_helper, args=(repository_full_name,file_list,))
+            t = threading.Thread(target=self.get_file_commits_helper, args=(
+                repository_full_name, file_list,))
             thread_list.append(t)
             t.daemon = True
             t.start()
@@ -139,7 +144,7 @@ class GithubAPIWrapper:
                 pass
         return self.file_commits
 
-    def get_file_commits_helper(self,repository_full_name,file_list):
+    def get_file_commits_helper(self, repository_full_name, file_list):
         """
         Helper function for get_file_commits, it is called by get_file_commits to implement multi-threading.
         """
@@ -157,11 +162,12 @@ class GithubAPIWrapper:
             try:
                 self.file_commits[file] = []
                 for commit in commits:
-                    self.file_commits[file].append(commit['commit']['author']['name'])
+                    self.file_commits[file].append(
+                        commit['commit']['author']['name'])
             except:
                 pass
 
-    def get_contributors(self,repository_full_name):
+    def get_contributors(self, repository_full_name):
 
         page = 1
         contributors = []
@@ -180,17 +186,17 @@ class GithubAPIWrapper:
                 else:
                     contributors.append(element["name"])
 
-            page+=1
+            page += 1
 
         return contributors
 
     def get_commit_count(self, repository_full_name, commit):
         """
         TODO: we might wanna add starting commit option as it only starts from the first commit
-        
+
         Returns the commit count starting from the first commit to the given commit
         """
-        fc = self.get_first_commit(repository_full_name) 
+        fc = self.get_first_commit(repository_full_name)
         url = f"https://api.github.com/repos/{repository_full_name}/compare/{fc}...{commit}"
         commit_req = self.do_request(url)
         if commit_req.status_code == 200:
@@ -198,7 +204,6 @@ class GithubAPIWrapper:
             return commit_count
         else:
             return []
-
 
     def get_first_commit(self, repository_full_name):
         """
@@ -211,7 +216,8 @@ class GithubAPIWrapper:
             json_data = response.json()
 
             if response.headers.get('Link'):
-                page_url = response.headers.get('Link').split(',')[1].split(';')[0].split('<')[1].split('>')[0]
+                page_url = response.headers.get('Link').split(',')[1].split(';')[
+                    0].split('<')[1].split('>')[0]
                 commit_response = self.do_request(page_url)
                 first_commit = commit_response.json()
                 first_commit_hash = first_commit[-1]['sha']
@@ -220,8 +226,6 @@ class GithubAPIWrapper:
                 first_commit_hash = json_data[-1]['sha']
         else:
             return []
-
-
 
     def get_last_commit(self, repository_full_name):
         """
@@ -241,54 +245,51 @@ class GithubAPIWrapper:
         else:
             return []
 
-
     def get_all_branch_names(self, repository_full_name):
         """Returns the branch list in the given repositories
         Args:
             repository_full_name (string): The repository links in format like "{username}/{repo}"
-            
+
         Returns:
             branch_names : All branch names and informations about the branches in JSON format
         """
-        
+
         url = f"https://api.github.com/repos/{repository_full_name}/branches"
         response = self.do_request(url)
-        
-        if response.status_code== 200:
+
+        if response.status_code == 200:
             return response.json()
         else:
             return []
-    
 
     def get_issues(self, repository_full_name):
         """Returns the issiues of a given repository name
         Args:
         r: Repo full name
-        
+
         Returns:
         Issiues: JSON format of the issiues output of the GitHub API 
         """
 
         # we can get all the issues
         # so for example open issues ends in 3 pages,
-        #https://api.github.com/repos/projectdiscovery/nuclei/issues?state=open&page=1
-        #https://api.github.com/repos/projectdiscovery/nuclei/issues?state=open&page=2
-        #https://api.github.com/repos/projectdiscovery/nuclei/issues?state=open&page=3
+        # https://api.github.com/repos/projectdiscovery/nuclei/issues?state=open&page=1
+        # https://api.github.com/repos/projectdiscovery/nuclei/issues?state=open&page=2
+        # https://api.github.com/repos/projectdiscovery/nuclei/issues?state=open&page=3
 
         # fetch closed issues like abowe as well.
         # After all the fetching is done, add all the issue objects together and return.
 
-        # ooor 
+        # ooor
         # we can fetch closed and open issues like below,
         # https://api.github.com/search/issues?q=repo:projectdiscovery/nuclei+type:issue+state:open
-
 
         # open issues
         url = f"https://api.github.com/search/issues?q=repo:{repository_full_name}+type:issue+state:open"
         response = self.do_request(url)
-        
+
         result = {}
-        if response.status_code== 200:
+        if response.status_code == 200:
             result["open_issues"] = response.json()["total_count"]
         else:
             return []
@@ -296,28 +297,27 @@ class GithubAPIWrapper:
         # closed issues
         url = f"https://api.github.com/search/issues?q=repo:{repository_full_name}+type:issue+state:closed"
         response = self.do_request(url)
-        
-        if response.status_code== 200:
+
+        if response.status_code == 200:
             result["closed_issues"] = response.json()["total_count"]
         else:
             return []
 
         return result
 
-
     def get_contributions(self, repository_full_name):
         """
         Returns the contributions of a given repository name
         Args:
         repository_full_name: Repo full name
-        
+
         Returns:
         Contributions: JSON format of the contributions output of the GitHub API 
-        
+
         """
-        
-        #https://api.github.com/repos/projectdiscovery/nuclei/contributors
-        
+
+        # https://api.github.com/repos/projectdiscovery/nuclei/contributors
+
         # this per_page is a temporary fix, it might get f'd up with repositories that have huge number of contributors
         url = f"https://api.github.com/repos/{repository_full_name}/contributors?per_page=1000"
         response = self.do_request(url)
@@ -327,17 +327,27 @@ class GithubAPIWrapper:
         response["contributions"] is the number of contributions
         """
 
-        if response.status_code== 200:
+        if response.status_code == 200:
             return response.json()
         else:
             return []
-         
+
+    def get_gini_index(self, repository_full_name):
+        result = {}
+        contributions = self.get_contributions(repository_full_name)
+
+        for i in contributions:
+            result[i["login"]] = i["contributions"]
+            # print(i["contributions"])
+
+        return result.json()
+
 
 if __name__ == "__main__":
     """
     For testing purposes
     """
-    token = open("../.env","r").read().split("=")[1].strip()
+    token = open("../.env", "r").read().split("=")[1].strip()
     gaw = GithubAPIWrapper(token)
 
     rn = "xct/ropstar"
@@ -354,7 +364,7 @@ if __name__ == "__main__":
 
     bn = gaw.print_branch_list(rn)
     print(f"Branch list for {rn}: {bn}")
-    
+
     """
     repository_info = gaw.get_repository("morph3/crawpy")
     #commits = gaw.get_commits("morph3/crawpy")

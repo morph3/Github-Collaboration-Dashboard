@@ -297,6 +297,20 @@ def get_number_of_contributors():
 
     return json.dumps({"number_of_contributers":len(result)})
 
+@app.route('/api/get_gini_index')
+def get_gini_index():
+    """
+    Args:
+    r: Repo full name
+
+    :Return
+    gini_index: a json object that contains gini index of the repository
+    """
+    repo_full_name = flask.request.args.get('r')
+    result = gaw.get_gini_index(repo_full_name)
+
+    return json.dumps({"gini_index":result})
+
 
 if __name__ == '__main__':
     dot_env_parser()
