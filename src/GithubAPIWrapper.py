@@ -216,8 +216,7 @@ class GithubAPIWrapper:
             json_data = response.json()
 
             if response.headers.get('Link'):
-                page_url = response.headers.get('Link').split(',')[1].split(';')[
-                    0].split('<')[1].split('>')[0]
+                page_url = response.headers.get('Link').split(',')[1].split(';')[0].split('<')[1].split('>')[0]
                 commit_response = self.do_request(page_url)
                 first_commit = commit_response.json()
                 first_commit_hash = first_commit[-1]['sha']
