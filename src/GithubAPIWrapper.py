@@ -4,7 +4,7 @@ import sys
 import json
 
 
-from src.Gini_Index import calculate_gini_index
+from src.StatisticalFunctions import calculate_gini_index
 
 """
 Resources about Github REST API
