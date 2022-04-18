@@ -3,6 +3,9 @@ import threading
 import sys
 import json
 
+
+from src.StatisticalFunctions import calculate_gini_index
+
 """
 Resources about Github REST API
 
@@ -332,14 +335,16 @@ class GithubAPIWrapper:
             return []
 
     def get_gini_index(self, repository_full_name):
-        result = {}
+
+        commit_numbers=[]
         contributions = self.get_contributions(repository_full_name)
 
         for i in contributions:
-            result[i["login"]] = i["contributions"]
+        
+            commit_numbers.append(i["contributions"])
             # print(i["contributions"])
 
-        return result.json()
+        return calculate_gini_index(commit_numbers)
 
 
 if __name__ == "__main__":
