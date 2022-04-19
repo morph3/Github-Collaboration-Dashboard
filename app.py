@@ -136,7 +136,7 @@ def calculate_truck_factor():
         else:
             if(storage_entry):
                 result = storage_entry
-  
+
             else:
                 result = tfc.stack_based_truck_factor(repository_full_name)
                 storage.add(result)
