@@ -248,7 +248,7 @@
                                         })
                                         .then(function(result) {
                                             let giniParagraph = document.querySelector("#giniParagraphId");
-                                            giniParagraph.innerHTML = `Calculated gini coefficient: <b>${result.gini_index}</b>`;
+                                            giniParagraph.innerHTML += `Calculated gini coefficient: <b>${result.gini_index}</b>`;
                                         });
                                 </script>
 
