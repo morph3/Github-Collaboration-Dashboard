@@ -168,18 +168,23 @@
                                                                     tfParagraph.appendChild(paragraph);
                                                                 }
 
+                                                                let tfDate = document.querySelector("#truckFactorDateParagraphId");
+                                                                tfDate.innerHTML = `Truck factor was last calculated at date: <br> ${result.date}`;
+
                                                                 var truckFactorChart = new ApexCharts(truckFactorChartSelector, options);
                                                                 truckFactorChart.render();
 
                                                                 window.dispatchEvent(new Event('resize')); // after the render is done, send a resize event
 
-                                                                // do something with jsonResponse
                                                             });
                                                     });
 
                                             }
                                         </script>
                                     </p>
+
+                                    <p id="truckFactorDateParagraphId" style="text-align: center"></p>
+
                                 </div>
                             </div>
 
@@ -223,8 +228,6 @@
                                     <p>
 
                                         <hr></hr>
-
-
                                         Users that form the truck factor:
                                     </p>
 
@@ -234,7 +237,25 @@
                                 </div>
                                 <!-- end row-->
                             </div>
+                            
+                            <hr>
+                            <div class="row">
 
+                                <script>
+                                    fetch(`${window.location.protocol}//${window.location.host}/api/get_gini_index?r={{repository_info.full_name}}`)
+                                        .then(function(response) {
+                                            return response.json();
+                                        })
+                                        .then(function(result) {
+                                            let giniParagraph = document.querySelector("#giniParagraphId");
+                                            giniParagraph.innerHTML = `Calculated gini coefficient: <b>${result.gini_index}</b>`;
+                                        });
+                                </script>
+
+                                <p id="giniParagraphId">
+                                    
+                                </p>
+                            </div>
 
 
 

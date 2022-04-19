@@ -3,8 +3,7 @@ import threading
 import sys
 import json
 
-
-from src.StatisticalFunctions import calculate_gini_index
+from src.Utils import calculate_gini_index
 
 """
 Resources about Github REST API
@@ -129,7 +128,7 @@ class GithubAPIWrapper:
         self.file_commits = {}  # make sure its empty
 
         thread_list = []
-        n_threads = 50
+        n_threads = 40
         for t in range(n_threads):
             t = threading.Thread(target=self.get_file_commits_helper, args=(
                 repository_full_name, file_list,))

@@ -7,6 +7,7 @@ except:
     from GithubAPIWrapper import GithubAPIWrapper
 import time
 import json
+from datetime import datetime
 
 class TruckFactorCalculator:
     def __init__(self,gaw):
@@ -116,12 +117,12 @@ class TruckFactorCalculator:
                 break
 
         print(f"Truck Factor: {truckFactor}, length: {len(truckFactor)}")
-        entry = {}
-        entry["repository_name"] = repository_full_name
-        entry["type"] = "commit"
-        entry["users"] = truckFactor
-        entry["truck_factor"] = len(truckFactor)
-
+        entry                       = {}
+        entry["repository_name"]    = repository_full_name
+        entry["type"]               = "commit"
+        entry["users"]              = truckFactor
+        entry["truck_factor"]       = len(truckFactor)
+        entry["date"]               = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         return entry
 
     # Src: Assessing the bus factor of Git repositories - Valerio Cosentino, Javier Cánovas Izquierdo, Jordi Cabot
@@ -204,11 +205,12 @@ class TruckFactorCalculator:
                 truckFactor.append(name)
 
         print(f"Truck Factor: {truckFactor}, length: {len(truckFactor)}")
-        entry = {}
-        entry["repository_name"] = repository_full_name
-        entry["type"] = "heuristic"
-        entry["users"] = truckFactor
-        entry["truck_factor"] = len(truckFactor)
+        entry                       = {}
+        entry["repository_name"]    = repository_full_name
+        entry["type"]               = "heuristic"
+        entry["users"]              = truckFactor
+        entry["truck_factor"]       = len(truckFactor)
+        entry["date"]               = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         return entry
 
@@ -300,11 +302,12 @@ class TruckFactorCalculator:
                 break
 
         print(f"Truck Factor: {truckFactor}, length: {len(truckFactor)}")
-        entry = {}
-        entry["repository_name"] = repository_full_name
-        entry["type"] = "stack"
-        entry["users"] = truckFactor
-        entry["truck_factor"] = len(truckFactor)
+        entry                       = {}
+        entry["repository_name"]    = repository_full_name
+        entry["type"]               = "stack"
+        entry["users"]              = truckFactor
+        entry["truck_factor"]       = len(truckFactor)
+        entry["date"]               = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         return entry
 
@@ -316,7 +319,7 @@ if __name__ == "__main__":
     tfc = TruckFactorCalculator(gaw)
 
     start_time = time.time()
-    tfc.commit_based_truck_factor("morph3/crawpy")
+    tfc.stack_based_truck_factor("morph3/crawpy")
     end_time = time.time()
     print(f"Time taken to calculate repo 'morph3/crawpy': {end_time - start_time}")
 
