@@ -107,22 +107,3 @@ class SimpleStorage:
         print(f"Number of entries in the storage: {self.size}")
         return ""
 
-
-if __name__ == "__main__":
-    storage = SimpleStorage()
-    storage.load_file("../storage.json")
-    print(storage)
-
-
-    repo_name = "projectdiscovery/httpx"
-    type      = "heuristic"
-
-    print(f"All items for '{repo_name}': {storage.get_all('projectdiscovery/httpx','heuristic')}")
-
-    last_item = storage.get_last('projectdiscovery/httpx','heuristic')
-    #print(last_item)
-    if last_item:
-        print(f"Last item for '{repo_name}': {last_item}")
-
-    # TODO:
-    # Add more tests here.

@@ -49,12 +49,3 @@ def generate_random_datetime(n, start_date="-90d", end_date="now"):
         dates.append(f.date_time_between(start_date="-90d", end_date="now").strftime('%Y-%m-%d %H:%M:%S'))
     return dates
 
-
-if __name__ == '__main__':
-    "For test purposes"
-    data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    print(calculate_gini_index(data))
-    data = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-    print(calculate_gini_index(data))
-    data=[1]
-    print(calculate_gini_index(data))
