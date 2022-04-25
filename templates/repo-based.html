@@ -99,6 +99,75 @@
                                     <p id="truckFactorChart">
 
                                         <script>
+
+
+                                            function draw_tf_history_chart(){
+                                                let type = $('.truck-factor-selector').val(); // get the currently selected option
+                                                let repository_name = "{{repository_info.full_name}}";
+
+
+                                                fetch(`${window.location.protocol}//${window.location.host}/api/get_truck_factor_history?t=${type}&r=${repository_name}`)
+                                                .then(function(response) {
+                                                    return response.json();
+                                                })
+                                                .then(function(tfHistoryJsonResponse) {
+                                                    
+                                                    console.log(tfHistoryJsonResponse);
+                                                    let result;
+                                                    result = tfHistoryJsonResponse;
+                                                    let dates = [];
+                                                    let tf_values = []
+                                                    // generate date_set, this will be the y axis of the chart
+                                                    for (i = 0; i < result.length; i++) {
+                                                        dates.push(result[i].date);
+                                                        tf_values.push(result[i].truck_factor);
+                                                    }
+                                                    
+                                                    console.log(dates);
+                                                    console.log(tf_values);
+     
+                                                    var options = {
+                                                        series: [{
+                                                            name : "Truck Factors",
+                                                            data : tf_values
+                                                        }],
+                                                        chart: {
+                                                            height: 250,
+                                                            type: 'line',
+                                                        },
+                                                        dataLabels: {
+                                                            enabled: false
+                                                        },
+                                                        stroke: {
+                                                            curve: 'straight'
+                                                        },
+                                                        title: {
+                                                            text: 'Truck Factor Change Overtime',
+                                                            align: 'left'
+                                                        },
+                                                        grid: {
+                                                            row: {
+                                                                colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                                                                opacity: 0.5
+                                                            },
+                                                        },
+                                                        xaxis: {
+                                                            categories: dates,
+                                                            }
+                                                        };
+
+                                                        var chart = new ApexCharts(document.querySelector("#tfHistoryId"), options);
+                                                        chart.render();
+      
+      
+
+                                                })
+                                            }
+
+
+
+
+
                                             function calculate_truck_factor() {
                                                 window.dispatchEvent(new Event('resize')); // after the render is done, send a resize event
 
@@ -173,13 +242,14 @@
 
                                                                 var truckFactorChart = new ApexCharts(truckFactorChartSelector, options);
                                                                 truckFactorChart.render();
-
+                                                                draw_tf_history_chart();
                                                                 window.dispatchEvent(new Event('resize')); // after the render is done, send a resize event
 
                                                             });
                                                     });
 
                                             }
+
                                         </script>
                                     </p>
 
@@ -200,19 +270,30 @@
                                             <option value="heuristic">Heuristic based truck factor</option>
                                             <option value="stack">Stack based truck factor</option>
                                           </select>
-
-
-
                                     </div>
+                                
                                 </div>
+                            <!-- end row -->
+                            </div>
 
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                <label class="form-check-label" for="flexCheckDefault">
+                                    Force re-calculating of truck factor
+                                </label>
+                            </input>
+
+
+
+                            <!-- TODO: update this hr with the js later on -->
+                            <hr>
+                            <!-- row start -->
+                            <div class="row">
+                                <p id="tfHistoryId">  </p>
 
                                 <!-- end row -->
                             </div>
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                            <label class="form-check-label" for="flexCheckDefault">
-                              Force re-calculating of truck factor
-                            </label>
+
+
 
                             <!-- row start -->
                             <!-- truck factor related information-->

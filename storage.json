@@ -493,5 +493,39 @@
         ],
         "truck_factor": 9,
         "date": "2022-04-24 20:44:27"
+    },
+    {
+        "repository_name": "projectdiscovery/httpx",
+        "type": "commit",
+        "users": [
+            "V\u00edctor Zamanillo",
+            "bauthard",
+            "mzack",
+            "LuitelSamikshya",
+            "Mzack9999",
+            "Sami",
+            "sandeep",
+            "M09Ic",
+            "Ice3man"
+        ],
+        "truck_factor": 9,
+        "date": "2022-04-25 04:13:44"
+    },
+    {
+        "repository_name": "projectdiscovery/httpx",
+        "type": "commit",
+        "users": [
+            "V\u00edctor Zamanillo",
+            "bauthard",
+            "mzack",
+            "LuitelSamikshya",
+            "sandeep",
+            "Mzack9999",
+            "Sami",
+            "M09Ic",
+            "Ice3man"
+        ],
+        "truck_factor": 9,
+        "date": "2022-04-25 04:18:52"
     }
 ]
