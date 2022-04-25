@@ -1,5 +1,4 @@
-# CNG491-Github-Collaboration-Dashboard  
- 
+# Github-Collaboration-Dashboard-Project 
 
 # Introduction
 
