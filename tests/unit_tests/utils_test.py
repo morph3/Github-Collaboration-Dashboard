@@ -2,14 +2,14 @@
 import sys
 import os
 import unittest
+sys.path.append(os.getcwd() + '/../../src/')
 
-sys.path.append(os.getcwd() + '/../src/')
 from Utils import *
 
 class TestUtils(unittest.TestCase):
 
     def test_dot_env(self):
-        with open("../.env", "r") as f:
+        with open("../../.env", "r") as f:
             token = f.read().split("=")[1].strip()
         self.assertTrue(token.startswith("ghp"))
 

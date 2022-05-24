@@ -1,14 +1,14 @@
 import unittest
 import sys
 import os
-sys.path.append(os.getcwd() + '/../src/')
+sys.path.append(os.getcwd() + '/../../src/')
 
 from GithubAPIWrapper import *
 
 
 class TestGithubAPIWrapper(unittest.TestCase):
     def test_get_repository_info(self):
-        with open("../.env", "r") as f:
+        with open("../../.env", "r") as f:
             token = f.read().split("=")[1].strip()
         gaw = GithubAPIWrapper(token)
         

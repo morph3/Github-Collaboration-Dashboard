@@ -1,7 +1,7 @@
 import unittest
 import sys
 import os
-sys.path.append(os.getcwd() + '/../src/')
+sys.path.append(os.getcwd() + '/../../src/')
 
 from TruckFactor import *
 from GithubAPIWrapper import *
@@ -9,7 +9,7 @@ from GithubAPIWrapper import *
 
 class TestTruckFactor(unittest.TestCase):
     def test_heuristic_based_tf(self):
-        with open("../.env", "r") as f:
+        with open("../../.env", "r") as f:
             token = f.read().split("=")[1].strip()
         gaw = GithubAPIWrapper(token)
         tfc = TruckFactorCalculator(gaw)

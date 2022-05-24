@@ -1,7 +1,7 @@
 import unittest
 import sys
 import os
-sys.path.append(os.getcwd() + '/../src/')
+sys.path.append(os.getcwd() + '/../../src/')
 
 from DataStorage import *
 
@@ -9,7 +9,7 @@ class TestDataStorage(unittest.TestCase):
 
     def test_load_file(self):
         storage = SimpleStorage()
-        storage.load_file("../storage.json")
+        storage.load_file("../../storage.json")
         self.assertEqual( storage.storage[0]["repository_name"] , "HashLips/hashlips_art_engine") 
         
     def test_get_all(self):
