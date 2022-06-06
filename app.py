@@ -250,6 +250,12 @@ def get_issue_dist():
     return json.dumps({'issue_dist':result})
 
 
+@app.route('/api/get_issue_gini_index')
+def get_issue_gini_index():
+    repo_full_name  = flask.request.args.get('r')
+    result          = gaw.get_issue_gini_index(repo_full_name)
+
+    return json.dumps({'issue_gini_index':result})
 
 
 

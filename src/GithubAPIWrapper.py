@@ -371,3 +371,9 @@ class GithubAPIWrapper:
         result = list(Counter(result).values())
 
         return result
+    
+    def get_issue_gini_index(self,repository_full_name):
+        
+        issue_distribution = self.get_issue_distribution(repository_full_name)
+        
+        return calculate_gini_index(issue_distribution)
