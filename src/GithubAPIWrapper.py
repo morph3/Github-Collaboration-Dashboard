@@ -1,3 +1,4 @@
+from collections import Counter
 import requests
 import threading
 import sys
@@ -220,7 +221,8 @@ class GithubAPIWrapper:
             json_data = response.json()
 
             if response.headers.get('Link'):
-                page_url = response.headers.get('Link').split(',')[1].split(';')[0].split('<')[1].split('>')[0]
+                page_url = response.headers.get('Link').split(',')[1].split(';')[
+                    0].split('<')[1].split('>')[0]
                 commit_response = self.do_request(page_url)
                 first_commit = commit_response.json()
                 first_commit_hash = first_commit[-1]['sha']
@@ -337,14 +339,35 @@ class GithubAPIWrapper:
 
     def get_gini_index(self, repository_full_name):
 
-        commit_numbers=[]
+        commit_numbers = []
         contributions = self.get_contributions(repository_full_name)
 
         for i in contributions:
-        
+
             commit_numbers.append(i["contributions"])
             # print(i["contributions"])
 
         return calculate_gini_index(commit_numbers)
 
+    # functions that takes the repsitory name and returns the distribution of issues
+    def get_issue_distribution(self, repository_full_name):
 
+        # Take the open issues
+        url = f"https://api.github.com/search/issues?q=repo:{repository_full_name}+type:issue+state:open"
+        response = self.do_request(url)
+
+        result = []
+        for i in response.json()["items"]:
+            result.append(i["user"]["login"])
+
+        # Same thing for closed issues
+        url = f"https://api.github.com/search/issues?q=repo:{repository_full_name}+type:issue+state:closed"
+        response = self.do_request(url)
+
+        for i in response.json()["items"]:
+            result.append(i["user"]["login"])
+
+        # Result array is now filled with all the usernames, now we need to count the number of times each username appears
+        result = list(Counter(result).values())
+
+        return result

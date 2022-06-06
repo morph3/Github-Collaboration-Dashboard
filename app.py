@@ -239,6 +239,20 @@ def get_gini_index():
 
     return json.dumps({"gini_index":result})
 
+
+@app.route('/api/get_issue_distribution')
+def get_issue_dist():
+    
+    repo_full_name  = flask.request.args.get('r')
+    result          = gaw.get_issue_distribution(repo_full_name)
+    
+    
+    return json.dumps({'issue_dist':result})
+
+
+
+
+
 @app.route('/api/get_truck_factor_history')
 def get_truck_factor_history():
     """
