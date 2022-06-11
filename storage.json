@@ -646,5 +646,31 @@
         ],
         "truck_factor": 1,
         "date": "2022-05-24 19:41:02"
+    },
+    {
+        "repository_name": "projectdiscovery/httpx",
+        "type": "commit",
+        "users": [
+            "V\u00edctor Zamanillo",
+            "bauthard",
+            "mzack",
+            "LuitelSamikshya",
+            "sandeep",
+            "Sami",
+            "Mzack9999",
+            "Ice3man",
+            "M09Ic"
+        ],
+        "truck_factor": 9,
+        "date": "2022-06-01 16:56:37"
+    },
+    {
+        "repository_name": "morph3/crawpy",
+        "type": "stack",
+        "users": [
+            "morph3"
+        ],
+        "truck_factor": 1,
+        "date": "2022-06-12 01:39:54"
     }
 ]

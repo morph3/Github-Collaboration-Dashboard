@@ -321,16 +321,40 @@
                             
                             <hr>
                             <div class="row">
+                                <!-- not needed ? 
+                                <div class="btn-group">
+                                    <br>
+                                    <button type="button" class="btn btn-primary" id="giniIndexCalculatorButton" onclick=calculate_gini_index()>Calculate Gini Index<br></button>
+                                    <select class="gini-index-factor-selector" >
+                                        <option value="commit">Commit based gini index</option>
+                                        <option value="issue">Issue based gini index</option>
+                                    </select>
+                                </div>
+                                -->
 
                                 <script>
-                                    fetch(`${window.location.protocol}//${window.location.host}/api/get_gini_index?r={{repository_info.full_name}}`)
-                                        .then(function(response) {
-                                            return response.json();
-                                        })
-                                        .then(function(result) {
-                                            let giniParagraph = document.querySelector("#giniParagraphId");
-                                            giniParagraph.innerHTML += `Calculated gini coefficient: <b>${result.gini_index}</b>`;
-                                        });
+
+                                    var repository_name = "{{repository_info.full_name}}";
+
+  
+                                    fetch(`${window.location.protocol}//${window.location.host}/api/calculate_gini_index?r=${repository_name}&t=commit`)  
+                                    .then(function(response) {
+                                        return response.json();
+                                    }) 
+                                    .then(function(result) {
+                                        let giniParagraph = document.querySelector("#giniParagraphId");
+                                        giniParagraph.innerHTML += `Gini index calculated based on <b>commit distribution</b>: <b>${result.gini_index}</b><br>`;
+                                    });
+
+                                    fetch(`${window.location.protocol}//${window.location.host}/api/calculate_gini_index?r=${repository_name}&t=issue`)  
+                                    .then(function(response) {
+                                        return response.json();
+                                    }) 
+                                    .then(function(result) {
+                                        let giniParagraph = document.querySelector("#giniParagraphId");
+                                        giniParagraph.innerHTML += `Gini index calculated based on <b>issue distribution</b>: <b>${result.gini_index}</b>`;
+                                    });
+                                
                                 </script>
 
                                 <p id="giniParagraphId">

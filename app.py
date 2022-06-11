@@ -229,17 +229,26 @@ def get_number_of_contributors():
     return json.dumps({"number_of_contributers": len(result)})
 
 
-@app.route('/api/get_gini_index')
+
+
+@app.route('/api/calculate_gini_index')
 def get_gini_index():
     """
     Args:
     r: Repo full name
+    t: Gini index type
 
     :Return
     gini_index: a json object that contains gini index of the repository
     """
     repo_full_name = flask.request.args.get('r')
-    result = gaw.get_gini_index(repo_full_name)
+    type           = flask.request.args.get('t')
+
+    if type == "commit":
+        result = gaw.commit_based_gini_index(repo_full_name)
+
+    elif type == "issue":
+        result = gaw.issue_based_gini_index(repo_full_name)
 
     return json.dumps({"gini_index": result})
 
@@ -267,13 +276,6 @@ def get_issue_dist():
 
     return json.dumps({'issue_dist': result})
 
-
-@app.route('/api/get_issue_gini_index')
-def get_issue_gini_index():
-    repo_full_name = flask.request.args.get('r')
-    result = gaw.get_issue_gini_index(repo_full_name)
-
-    return json.dumps({'issue_gini_index': result})
 
 
 @app.route('/test')

@@ -339,7 +339,7 @@ class GithubAPIWrapper:
         else:
             return []
 
-    def get_gini_index(self, repository_full_name):
+    def commit_based_gini_index(self, repository_full_name):
 
         commit_numbers = []
         contributions = self.get_contributions(repository_full_name)
@@ -353,7 +353,7 @@ class GithubAPIWrapper:
 
     # functions that takes the repsitory name and returns the distribution of issues
 
-    def get_issue_distribution(self, repository_full_name):
+    def issue_based_gini_index(self, repository_full_name):
 
         # Take the open issues
         url = f"https://api.github.com/search/issues?q=repo:{repository_full_name}+type:issue+state:open"
@@ -373,10 +373,4 @@ class GithubAPIWrapper:
         # Result array is now filled with all the usernames, now we need to count the number of times each username appears
         result = list(Counter(result).values())
 
-        return result
-
-    def get_issue_gini_index(self, repository_full_name):
-
-        issue_distribution = self.get_issue_distribution(repository_full_name)
-
-        return calculate_gini_index(issue_distribution)
+        return calculate_gini_index(result)
