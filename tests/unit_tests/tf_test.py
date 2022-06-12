@@ -1,63 +1,116 @@
 import sys
 import os
-sys.path.append(os.getcwd() + '/src/')
+sys.path.append(os.getcwd() + '/../../src/')
 from TruckFactor import *
 from GithubAPIWrapper import *
 import unittest
-
-
+import time
 
 
 class TestTruckFactor(unittest.TestCase):
 
 # test case to check the heuristic based of the truck factor is correct
-    
+
     def test_heuristic_based_tf(self):
         # initialize the required variables for the test case
-        with open(os.getcwd()+"/.env", "r") as f:
+        with open("../../.env", "r") as f:
             token = f.read().split("=")[1].strip()
         gaw = GithubAPIWrapper(token)
         tfc = TruckFactorCalculator(gaw)
-        
+
         # run the method to get the heuristic based truck factor
         result = tfc.heuristic_based_truck_factor("projectdiscovery/httpx")
-        
-        
+
+
         # test case is true when the user is in the list of users
         self.assertTrue("forgedhallpass" in result["users"])
 
 
 # test case to check the commit based of the truck factor is correct
-    
+
     def test_commit_based_tf(self):
         # initialize the required variables for the test case
-        with open(os.getcwd()+"/.env", "r") as f:
+        with open("../../.env", "r") as f:
             token = f.read().split("=")[1].strip()
         gaw = GithubAPIWrapper(token)
         tfc = TruckFactorCalculator(gaw)
-        
+
         # run the method to get the commit based truck factor
         result = tfc.commit_based_truck_factor("projectdiscovery/httpx")
-        
-        
+
+
         #test case is true when the user is in the list of users
         self.assertTrue("Sami" in result["users"])
 
 # test case to check the stack based of the truck factor is correct
-    
+
     def test_stack_based_tf(self):
         # initialize the required variables for the test case
-        with open(os.getcwd()+"/.env", "r") as f:
+        with open("../../.env", "r") as f:
             token = f.read().split("=")[1].strip()
         gaw = GithubAPIWrapper(token)
         tfc = TruckFactorCalculator(gaw)
-        
+
         # run the method to get the stack based truck factor
         result = tfc.stack_based_truck_factor("projectdiscovery/httpx")
-        
-        
+
+
         #test case is true when the user is in the list of users
         self.assertTrue("mzack" in result["users"])
+
+
+    # test case to check the heuristic based of the truck factor time is under threshold
+
+    def test_heuristic_time(self):
+        # initialize the required variables for the test case
+        with open("../../.env", "r") as f:
+            token = f.read().split("=")[1].strip()
+        gaw = GithubAPIWrapper(token)
+        tfc = TruckFactorCalculator(gaw)
+
+        start_time = time.time()
+        # run the method to get the heuristic based truck factor
+        result = tfc.heuristic_based_truck_factor("projectdiscovery/httpx")
+        end_time = time.time()
+        total_time = end_time-start_time
+        print(f"Time taken to calculate: {total_time}")
+
+        # test case is true if total_time is below the threshold of 30 sec
+        self.assertTrue(total_time < 30)
+
+    def test_commit_time(self):
+        # initialize the required variables for the test case
+        with open("../../.env", "r") as f:
+            token = f.read().split("=")[1].strip()
+        gaw = GithubAPIWrapper(token)
+        tfc = TruckFactorCalculator(gaw)
+
+        start_time = time.time()
+        # run the method to get the commit based truck factor
+        result = tfc.commit_based_truck_factor("projectdiscovery/httpx")
+        end_time = time.time()
+        total_time = end_time-start_time
+        print(f"Time taken to calculate: {total_time}")
+
+        # test case is true if total_time is below the threshold of 30 sec
+        self.assertTrue(total_time < 30)
+
+    def test_stack_time(self):
+        # initialize the required variables for the test case
+        with open("../../.env", "r") as f:
+            token = f.read().split("=")[1].strip()
+        gaw = GithubAPIWrapper(token)
+        tfc = TruckFactorCalculator(gaw)
+
+        start_time = time.time()
+        # run the method to get the stack based truck factor
+        result = tfc.stack_based_truck_factor("projectdiscovery/httpx")
+        end_time = time.time()
+        total_time = end_time-start_time
+        print(f"Time taken to calculate: {total_time}")
+
+        # test case is true if total_time is below the threshold of 30 sec
+        self.assertTrue(total_time < 30)
 
 
 if __name__ == "__main__":
