@@ -1,70 +1,68 @@
-import unittest
 import sys
 import os
-sys.path.append(os.getcwd() + '/../../src/')
-
+sys.path.append(os.getcwd() + '/src/')
 from TruckFactor import *
 from GithubAPIWrapper import *
+import unittest
+
+
 
 
 class TestTruckFactor(unittest.TestCase):
+
+# test case to check the heuristic based of the truck factor is correct
+    
     def test_heuristic_based_tf(self):
-        with open("../../.env", "r") as f:
+        # initialize the required variables for the test case
+        with open(os.getcwd()+"/.env", "r") as f:
             token = f.read().split("=")[1].strip()
         gaw = GithubAPIWrapper(token)
         tfc = TruckFactorCalculator(gaw)
+        
+        # run the method to get the heuristic based truck factor
         result = tfc.heuristic_based_truck_factor("projectdiscovery/httpx")
-        #print(result)
-        self.assertTrue("Ice3man" in result["users"])
+        
+        
+        # test case is true when the user is in the list of users
+        self.assertTrue("forgedhallpass" in result["users"])
+
+
+# test case to check the commit based of the truck factor is correct
     
-    def another_test(self):
-        pass
+    def test_commit_based_tf(self):
+        # initialize the required variables for the test case
+        with open(os.getcwd()+"/.env", "r") as f:
+            token = f.read().split("=")[1].strip()
+        gaw = GithubAPIWrapper(token)
+        tfc = TruckFactorCalculator(gaw)
+        
+        # run the method to get the commit based truck factor
+        result = tfc.commit_based_truck_factor("projectdiscovery/httpx")
+        
+        
+        #test case is true when the user is in the list of users
+        self.assertTrue("Sami" in result["users"])
+
+# test case to check the stack based of the truck factor is correct
+    
+    def test_stack_based_tf(self):
+        # initialize the required variables for the test case
+        with open(os.getcwd()+"/.env", "r") as f:
+            token = f.read().split("=")[1].strip()
+        gaw = GithubAPIWrapper(token)
+        tfc = TruckFactorCalculator(gaw)
+        
+        # run the method to get the stack based truck factor
+        result = tfc.stack_based_truck_factor("projectdiscovery/httpx")
+        
+        
+        #test case is true when the user is in the list of users
+        self.assertTrue("mzack" in result["users"])
+
 
 if __name__ == "__main__":
 
     unittest.main()
-    
-    
-    """
-    TODO: convert those below into unittests
-
-
-    token = open("../.env","r").read().split("=")[1].strip()
-    gaw = GithubAPIWrapper(token)
-
-
-    tfc = TruckFactorCalculator(gaw)
-
-    start_time = time.time()
-    tfc.stack_based_truck_factor("morph3/crawpy")
-    end_time = time.time()
-    print(f"Time taken to calculate repo 'morph3/crawpy': {end_time - start_time}")
-
-    start_time = time.time()
-    tf.commit_based_truck_factor("SerenityOS/serenity")
-    end_time = time.time()
-    print(f"Time taken to calculate repo 'SerenityOS/serenity': {end_time - start_time}")
-
-
-
-    start_time = time.time()
-    tf.commit_based_truck_factor("xct/ropstar")
-    end_time = time.time()
-    print(f"Time taken to calculate repo 'xct/ropstar': {end_time - start_time}")
-
-
-    start_time = time.time()
-    tf.commit_based_truck_factor("apexcharts/apexcharts.js")
-    end_time = time.time()
-    print(f"Time taken to calculate repo 'apexcharts/apexcharts.js': {end_time - start_time}")
-
-
-    start_time = time.time()
-    tf.commit_based_truck_factor("SerenityOS/serenity")
-    end_time = time.time()
-    print(f"Time taken to calculate repo 'SerenityOS/serenity': {end_time - start_time}")
-
-    """
 
 
     # before optimization

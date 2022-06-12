@@ -10,8 +10,13 @@ def calculate_gini_index(data):
     """
     Calculate the gini index of the data
     """
+    # take the absolute value of the data
     data = np.array(data, dtype=float)
-    print(data)
+    
+    # uncomment the following line if you want to see the values of the data
+    #print(data)
+    
+    # return the gini index of the data
     return gini(data)
 
 def dot_env_parser():
