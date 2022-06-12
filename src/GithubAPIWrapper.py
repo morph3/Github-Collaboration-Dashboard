@@ -51,6 +51,16 @@ class GithubAPIWrapper:
         else:
             return []
 
+    def get_user(self, username):
+
+        url = f"https://api.github.com/users/{username}"
+        response = self.do_request(url)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return []
+            
+
     def get_commits(self, repository_full_name):
         """
         Get a list of commits for a given repository.

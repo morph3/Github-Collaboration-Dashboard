@@ -45,7 +45,9 @@ def repository_search():
 def user_search():
     username = flask.request.args.get('u')
     repos = gaw.get_repositories(username)
-    return flask.render_template('user-based.html', username=username, repositories=repos)
+    user_info = gaw.get_user(username)
+
+    return flask.render_template('user-based.html', username=username, user_info=user_info, repositories=repos)
 
 
 @app.route('/api/get_repository_info')
@@ -71,8 +73,7 @@ def get_repository_commits():
 
     for i in commits:
         # Each line, Takes commiters' infos and commmit messages
-        l.append({"commiter": i["commit"]["committer"],
-                 "commit": i["commit"]["message"]})
+        l.append({"commiter": i["commit"]["committer"], "commit": i["commit"]["message"]})
 
     return json.dumps(l, indent=4)
 
@@ -268,20 +269,10 @@ def get_truck_factor_history():
     return json.dumps(storage_entry), {"Content-Type": "application/json"}
 
 
-@app.route('/api/get_issue_distribution')
-def get_issue_dist():
-
-    repo_full_name = flask.request.args.get('r')
-    result = gaw.get_issue_distribution(repo_full_name)
-
-    return json.dumps({'issue_dist': result})
-
-
-
 @app.route('/test')
 def test():
-    return flask.render_template('test.html')
 
+    return flask.render_template("test.html")    
 
 if __name__ == '__main__':
 

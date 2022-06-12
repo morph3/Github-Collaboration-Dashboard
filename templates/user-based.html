@@ -16,7 +16,7 @@
 </head>
 
 
-<body>
+<body onload="update_truck_factor_info(0)">
     <div class="">
         <div class="container">
 
@@ -42,16 +42,8 @@
 
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="info" aria-selected="true">
-              <i class="d-block fa fa-lg fa-info"></i>
-            </button>
-                </li>
-
-
-
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="chart-tab" data-bs-toggle="tab" data-bs-target="#chart" type="button" role="tab" aria-controls="chart" aria-selected="false">
-              <i class="d-block fa fa-lg fa-area-chart"></i>
-            </button>
+                        <i class="d-block fa fa-lg fa-info"></i>
+                    </button>
                 </li>
 
             </ul>
@@ -63,87 +55,102 @@
                     <div class="">
                         <div class="container">
                             <div class="row">
-                                <div class="col-md-12">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <p class="">&lt;Informatory paragraph about the user&gt;</p>
-                                        </div>
-                                    </div>
+                                    <div class="col-md-6">
+                                        <br>
+                                        <img src="{{user_info.avatar_url}}" width="100" height="100">
+                                        <br>
+                                            <b>{{user_info.name}}</b>
+                                            
+                                            <br>
+                                            <br>
 
-                                </div>
+                                            <li>Company: {{user_info.company}}</li>
+                                            <li>Location: {{user_info.location}}</li>
+                                            <li>Email: {{user_info.email}}</li>
+                                            
+
+                                            <li>Number of followers: {{user_info.followers}}</li>
+                                            <li>Number of following: {{user_info.following}}</li>
+                                        
+                                            <li>Number of public repositories: {{user_info.public_repos}}</li>
+                                            <li>Account created at: {{user_info.created_at}}</li>
+                                            <li>Account last updated at: {{user_info.updated_at}}</li>
+                                            
+                                    </div>
                             </div>
 
-                            <!-- row start -->
+                            <br>
+
+                            <!-- row start -->  
+                            <!-- truck factor related information-->
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="btn-group">
-                                        <button type="button" class="btn btn-primary">Truck Factor Variants<br></button>
-                                        <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false"></button>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="#">Blame based truck factor</a>
-                                            <a class="dropdown-item" href="#">Commit based truck factor<br></a>
-                                            <a class="dropdown-item" href="#">Stack based truck factor</a>
-                                        </div>
+                                        <br>
+                                        <button type="button" class="btn btn-primary" id="truckFactorCalculateButton" onclick=foobar()>Find in which repositories user in the truck factor <br></button>
+                                        <select class="truck-factor-selector" onchange="update_truck_factor_info(this.selectedIndex);">
+                                            <option value="commit">Commit based truck factor</option>
+                                            <option value="heuristic">Heuristic based truck factor</option>
+                                            <option value="stack">Stack based truck factor</option>
+                                        </select>
+                                    </div>
+                                
+                                </div>
+                            <!-- end row -->
+                            </div>
+
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                <label class="form-check-label" for="flexCheckDefault">
+                                    Force re-calculating of truck factor
+                                </label>
+                            </input>
+
+                            <br>
+                            <br>
+
+
+                            <div class="accordion" id="accordionExample">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingOne">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                            List of repositories of this user
+                                        </button>
+                                    </h2>
+                                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                    
+                                        {% for repository in repositories %}
+                                        <li><a href="{{ repository.html_url }}">{{ repository.full_name }}</a> ->
+                                            <a href="/repository?r={{repository.full_name}}">  Analyze this repository </a>
+                                        </li>
+                                        {% endfor %}
+                                    
+                                    
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <p class="" style="">&lt;truck factor graph&gt;</p>
                                 </div>
-                                <!-- end row -->
-                            </div>
 
-                            <!-- row start -->
-                            <!-- truck factor related information-->
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <p class="text-monospace" id="currentVariantParagraphId">&lt;Information about the current variant&gt;<br></p>
-                                    <p class="text-monospace" id="truckFactorDevelopersParagraphId">&lt;Which developers form the truck factor&gt;<br></p>
-                                    <p class="text-monospace" id="repositoriesUserInTruckFactorParagraphId">&lt;Information about which repositories user in truck factor&gt;<br>&lt;placeholder&gt;</p>
-                                </div>
-                                <!-- end row-->
                             </div>
 
 
-                            <!-- row start -->
-                            <!-- list of repositories this user have -->
-                            <div class="row">
-                                <div class="col-md-12">
-                                </div>
-                                <!-- end row-->
-                            </div>
 
-                            <!-- row start -->
-                            <div class="row">
-                                {% for repository in repositories %}
-                                <li><a href="{{ repository.html_url }}">{{ repository.full_name }}</a> ->
-                                    <a href="/repository?r={{repository.full_name}}">  Analyze this repository </a>
-                                </li>
-                                {% endfor %}
-                                <!-- end row-->
-                            </div>
+
+
+
+
+
+
+
+
+
+
 
                         </div>
                     </div>
                     <!-- end info tab -->
                 </div>
 
-                <div class="tab-pane fade" id="chart" role="tabpanel" aria-labelledby="chart-tab">
-                    Posuere urna nec tincidunt praesent semper feugiat. Nunc mattis enim ut tellus elementum sagittis vitae et. Proin libero nunc consequat interdum varius sit amet mattis vulputate. Amet nulla facilisi morbi tempus iaculis urna id volutpat. Enim nulla aliquet
-                    porttitor lacus luctus accumsan. Natoque penatibus et magnis dis parturient montes nascetur ridiculus mus. At augue eget arcu dictum varius. Dignissim enim sit amet venenatis urna cursus eget nunc scelerisque. Aliquam ut porttitor
-                    leo a diam sollicitudin tempor. Bibendum neque egestas congue quisque egestas diam in arcu cursus. Tincidunt vitae semper quis lectus nulla. Diam sollicitudin tempor id eu nisl nunc mi. Blandit volutpat maecenas volutpat blandit aliquam
-                    etiam erat. Aliquet bibendum enim facilisis gravida neque convallis a.
 
-                    <div class="col-md-6">
-                        <img class="img-fluid rounded-circle" src="https://static.pingendo.com/img-placeholder-3.svg" width="200" height="200">
-                        <img class="img-fluid rounded-circle" src="https://static.pingendo.com/img-placeholder-3.svg" width="200" height="200">
-                    </div>
-
-                    <div class="col-md-6">
-                        <img class="img-fluid rounded-circle" src="https://static.pingendo.com/img-placeholder-3.svg" width="200" height="200">
-                        <img class="img-fluid rounded-circle" src="https://static.pingendo.com/img-placeholder-3.svg" width="200" height="200">
-                    </div>
-
-                </div>
 
             </div>
 
