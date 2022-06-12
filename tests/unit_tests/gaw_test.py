@@ -7,7 +7,7 @@ from GithubAPIWrapper import *
 
 
 class TestGithubAPIWrapper(unittest.TestCase):
-    
+
 # test case for check the method can get the repository information
     def test_get_repository_info(self):
         with open(os.getcwd() + "/.env", "r") as f:
@@ -191,6 +191,59 @@ class TestGithubAPIWrapper(unittest.TestCase):
         self.assertTrue(files[i]['name']==test_files[i] for i in range(len(test_files)))
 
 
+# test case that checks the method can get the contributors of a selected repository
+    def test_get_contributors(self):
+        with open(os.getcwd() + "/.env", "r") as f:
+            token = f.read().split("=")[1].strip()
+        gaw = GithubAPIWrapper(token)
+
+        # you can change the full repository name and the contributor list here
+        repo_full_name = "xct/ropstar"
+        
+        test_contributors = ['xct', 'Reelix', 'clubby789']
+        
+        # run the method
+        contributors= gaw.get_contributors(repository_full_name=repo_full_name)
+        
+        # the test is true when the result of the method is same as the test_contributors
+        self.assertTrue(contributors[i]['login']==test_contributors[i] for i in range(len(test_contributors)))
+
+
+# test case to check the method can get the right gini index of a selected repository (commit based)
+    def test_get_gini_index(self):
+        with open(os.getcwd() + "/.env", "r") as f:
+            token = f.read().split("=")[1].strip()
+        gaw = GithubAPIWrapper(token)
+        
+        # you can change the full repository name and the gini index here
+        repo_full_name = "SerenityOS/serenity"
+        
+        test_gini = 0.7622133020917038
+        
+        # run the method
+        gini= gaw.commit_based_gini_index(repository_full_name=repo_full_name)
+        
+        # test is true when the result of the method is same as the test_gini
+        self.assertEqual(gini,test_gini)
+
+
+# test case to check the method can get the right gini index of a selected repository (issue based)
+
+    def test_get_gini_index_issue(self):
+        with open(os.getcwd() + "/.env", "r") as f:
+            token = f.read().split("=")[1].strip()
+        gaw = GithubAPIWrapper(token)
+
+        # you can change the full repository name and the gini index here
+        repo_full_name = "borisdayma/dalle-mini"
+
+        test_gini = 0.8758360484881524
+
+        # run the method
+        gini = gaw.commit_based_gini_index(repository_full_name=repo_full_name)
+        
+        # test is true when the result of the method is same as the test_gini
+        self.assertEqual(gini, test_gini)
 
 
 
