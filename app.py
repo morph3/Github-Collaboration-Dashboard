@@ -93,17 +93,8 @@ def get_user_repositories():
     return json.dumps(l, indent=4)
 
 
-@app.route('/api/calculate_truck_factor')
-def calculate_truck_factor():
-    """
-    :args r: repository full name
-    :args t: type of the repository
-    :returns: a json object of calculated truck factor, including repository name, tf, users and type
-    """
 
-    type = flask.request.args.get('t')
-    repository_full_name = flask.request.args.get('r')
-    is_force = flask.request.args.get('force')
+def calculate_truck_factor(type, repository_full_name, is_force):
     print(f"Is force: {is_force}")
 
     storage_entry = storage.get_last(repository_full_name, type)
@@ -130,7 +121,7 @@ def calculate_truck_factor():
 
         print(f"Returning {json.dumps(result)}")
         # result should already be in the format of json
-        return json.dumps(result), {"Content-Type": "application/json"}
+        return result
 
     elif type == "stack":
 
@@ -146,7 +137,7 @@ def calculate_truck_factor():
                 result = tfc.stack_based_truck_factor(repository_full_name)
                 storage.add(result)
         # result should already be in the format of json
-        return json.dumps(result), {"Content-Type": "application/json"}
+        return result
 
     elif type == "heuristic":
 
@@ -161,7 +152,46 @@ def calculate_truck_factor():
                 result = tfc.heuristic_based_truck_factor(repository_full_name)
                 storage.add(result)
         # result should already be in the format of json
+        return result
+
+
+@app.route('/api/calculate_truck_factor', methods=['GET','POST'])
+def truck_factor_wrapper():
+    """
+    :args r: repository full name
+    :args t: type of the repository
+    :returns: a json object of calculated truck factor, including repository name, tf, users and type
+    """
+
+    if flask.request.method == "GET":
+            
+        type                    = flask.request.args.get('t')
+        repository_full_name    = flask.request.args.get('r')
+        is_force                = flask.request.args.get('force')
+
+        result = calculate_truck_factor(type, repository_full_name, is_force)
         return json.dumps(result), {"Content-Type": "application/json"}
+
+    if flask.request.method == "POST":
+
+        # if request is post, there are(can be) multiple repositories to be calculated
+        type                = flask.request.form.get('t')
+        repositories        = json.loads(flask.request.form.get('r'))
+        is_force            = flask.request.form.get('force')
+        print(repositories)
+        results = []
+
+        for k,v in repositories.items():
+
+            result = calculate_truck_factor(type, v, is_force)
+            results.append(result)
+        
+        
+        return json.dumps(results), {"Content-Type": "application/json"}
+
+
+
+
 
     return "{\"error\": \"Given truck factor is not implemented yet\"}"
 

@@ -16,7 +16,7 @@
 </head>
 
 
-<body onload="update_truck_factor_info(0)">
+<body>
     <div class="">
         <div class="container">
 
@@ -77,52 +77,45 @@
                                             <li>Account last updated at: {{user_info.updated_at}}</li>
                                             
                                     </div>
-                            </div>
 
-                            <br>
 
-                            <!-- row start -->  
-                            <!-- truck factor related information-->
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="btn-group">
-                                        <br>
-                                        <button type="button" class="btn btn-primary" id="truckFactorCalculateButton" onclick=foobar()>Find in which repositories user in the truck factor <br></button>
-                                        <select class="truck-factor-selector" onchange="update_truck_factor_info(this.selectedIndex);">
-                                            <option value="commit">Commit based truck factor</option>
-                                            <option value="heuristic">Heuristic based truck factor</option>
-                                            <option value="stack">Stack based truck factor</option>
-                                        </select>
+                                    <div class="col-md-6">
+                                        <p id="truckFactorChart"></p>
                                     </div>
-                                
-                                </div>
-                            <!-- end row -->
+
+
+
                             </div>
 
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Force re-calculating of truck factor
-                                </label>
-                            </input>
 
-                            <br>
-                            <br>
-
-
+                            <hr>
+                            
                             <div class="accordion" id="accordionExample">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header" id="headingOne">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                            List of repositories of this user
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                            List of repositories of this user (Select repositories to be added to the truck factor calculation) 
                                         </button>
                                     </h2>
-                                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                     <div class="accordion-body">
-                                    
+
+
+
                                         {% for repository in repositories %}
-                                        <li><a href="{{ repository.html_url }}">{{ repository.full_name }}</a> ->
-                                            <a href="/repository?r={{repository.full_name}}">  Analyze this repository </a>
-                                        </li>
+
+
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="{{repository.full_name}}" id="flexCheckDefault">
+                                                <label class="form-check-label" for="flexCheckDefault">
+                                                    <a href="{{ repository.html_url }}">{{ repository.full_name }}</a> 
+                                                    <!--
+                                                    ->  <a href="/repository?r={{repository.full_name}}">  Analyze this repository using this project </a>
+
+                                                    -->
+                                                </label>
+                                            </div>
+
                                         {% endfor %}
                                     
                                     
@@ -135,12 +128,161 @@
 
 
 
+                            <!-- row start -->  
+                            <!-- truck factor related information-->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="btn-group">
+                                        <br>
+                                        <button type="button" class="btn btn-primary" id="truckFactorCalculateButton" onclick=calculate_truck_factor()>Find in which repositories user in the truck factor <br></button>
+                                        <select class="truck-factor-selector">
+                                            <option value="commit">Commit based truck factor</option>
+                                            <option value="heuristic">Heuristic based truck factor</option>
+                                            <option value="stack">Stack based truck factor</option>
+                                        </select>
+                                    </div>
+                                
+                                </div>
+                            <!-- end row -->
+                            </div>
+
+
+                            <input class="form-check-input" type="checkbox" value="" id="forceCheckboxId">
+                                <label class="form-check-label" for="flexCheckDefault">
+                                    Force re-calculating of truck factor
+                                </label>
+                            </input>
+                            
+                            
+                            <hr>
+                            <div class="row">
+                                <p id="truckFactorDevelopersParagraphId">
+                                    
+                                    <!-- this is a list -->
+                                </p>
+
+                                <!-- end row -->
+                            </div>
+
+
+                            <script>
+                                function calculate_truck_factor(){
+
+                                    let truckFactorChartSelector = document.querySelector("#truckFactorChart");
+
+                                    var repo_arr = [];
+                                    var tf_result_arr = [];
+                                    var in_tf_count = 0;
+                                    var checkboxes = document.getElementsByClassName("form-check-input");
+                                    let type = $('.truck-factor-selector').val(); // get the currently selected option
+                                    let force = document.getElementById("forceCheckboxId").checked; // get the currently selected option
+                                    var curr_user = "{{username}}";
+                                    // ugly but hey who cares
+
+                                    // iterate through all checkboxes and calculate truck factor for each repository
+                                    for(i = 0; i < checkboxes.length-1; i++){
+                                        if (checkboxes[i].checked){
+
+                                            console.log(checkboxes[i].value);
+                                            // not needed I guess ? 
+                                            repo_arr.push(checkboxes[i].value);
+
+                                            // get the truck factor for this repository
+                                            // checkboxes[i].value is the repository_full_name
+
+
+                                        }
+
+                                    }
+                                    console.log(tf_result_arr);
+                                    console.log(repo_arr);
+                                    
+                                    fetch(`${window.location.protocol}//${window.location.host}/api/calculate_truck_factor`, 
+                                            {
+                                                method:"POST", 
+                                                headers: {
+                                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                                },
+                                                body:`t=${type}&r=${JSON.stringify(Object.assign({}, repo_arr))}&force=${force}`
+                                            } )
+                                                .then(function(response) {
+                                                    return response.json();
+                                                })
+                                                .then(function(truckFactorJsonResponse) {
+
+                                                    result = truckFactorJsonResponse;
+                                                    console.log(result);
+                                                    
+
+                                                    for(i=0; i < result.length; i++){
+                                                        if (result[i].users.indexOf(curr_user) > -1){
+                                                            console.log(`current user is in this truck factor`);
+                                                            console.log(`result[${i}].truck_factor: ${result[i].truck_factor}`);
+                                                            in_tf_count++;
+
+                                                        }
+
+                                                    }
+
+                                                    var myArr = [];
+
+                                                    myArr.push(in_tf_count);
+                                                    myArr.push(result.length - in_tf_count);
+
+                                                    var options = {
+                                                        // pie chart using number of contributers to the repository and the ones that form the truck factor
+                                                        series: myArr,
+
+                                                        chart: {
+                                                            type: 'pie',
+                                                            width: '600px',
+                                                        },
+                                                        labels: ["Number of repositories user in the the truck factor", "Number of repositories user not in the the truck factor"],
+                                                    };
+
+                                                    console.log(options);
+
+
+                                                    var truckFactorChart = new ApexCharts(truckFactorChartSelector, options);
+                                                    truckFactorChart.render();
+
+                                                    let tfParagraph = document.querySelector("#truckFactorDevelopersParagraphId");
+                                                    tfParagraph.textContent = "";
+
+                                                    for (i = 0; i < result.length; i++) {
+                                                        tfParagraph.innerHTML += `<b>${result[i].repository_name}</b>`;
+                                                        
+                                                        let ordered_list = document.createElement("ol");
+                                                        for(j=0 ; j < result[i].users.length; j++){
+                                                            let item = document.createElement("li");
+                                                            item.innerHTML = `${result[i].users[j]}`;
+                                                            ordered_list.appendChild(item);
+
+                                                        }
+                                                        tfParagraph.appendChild(ordered_list);
+
+
+
+                                                    }
 
 
 
 
+                                                    window.dispatchEvent(new Event('resize')); // after the render is done, send a resize event
+
+                                                    // display the result
+
+                                                });
+
+                                }
+
+    
 
 
+                            </script>
+                            <br>
+                            <br>
+                            <br>
 
 
 
@@ -156,6 +298,7 @@
 
         </div>
     </div>
+    
 </body>
 
 </html>
