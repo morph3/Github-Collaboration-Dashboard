@@ -800,94 +800,103 @@
         "date": "2022-06-12 05:30:18"
     },
     {
-        "repository_name": "Seqat/HackerRankExercises",
+        "repository_name": "projectdiscovery/dnsprobe",
         "type": "commit",
         "users": [
-            "Seqat"
+            "Mzack9999"
         ],
         "truck_factor": 1,
-        "date": "2022-06-12 14:08:23"
+        "date": "2022-06-13 15:38:41"
     },
     {
-        "repository_name": "Seqat/HackerRankExercises",
+        "repository_name": "projectdiscovery/dnsx",
         "type": "commit",
         "users": [
-            "Seqat"
-        ],
-        "truck_factor": 1,
-        "date": "2022-06-12 14:08:35"
-    },
-    {
-        "repository_name": "morph3/Snake-game",
-        "type": "commit",
-        "users": [
-            "morph3"
-        ],
-        "truck_factor": 1,
-        "date": "2022-06-12 14:09:44"
-    },
-    {
-        "repository_name": "morph3/Windows-Red-Team-Cheat-Sheet",
-        "type": "commit",
-        "users": [],
-        "truck_factor": 0,
-        "date": "2022-06-12 14:09:45"
-    },
-    {
-        "repository_name": "morph3/Windows-RPC-Backdoor",
-        "type": "commit",
-        "users": [
-            "morph3"
-        ],
-        "truck_factor": 1,
-        "date": "2022-06-12 14:09:53"
-    },
-    {
-        "repository_name": "projectdiscovery/httpx",
-        "type": "heuristic",
-        "users": [
-            "bauthard",
+            "Mzack9999",
             "mzack",
-            "sandeep",
+            "bauthard",
+            "LuitelSamikshya",
             "Sandeep Singh",
-            "LuitelSamikshya",
-            "Mzack9999",
-            "V\u00edctor Zamanillo",
-            "Sami",
             "Ice3man",
-            "M09Ic",
-            "Ice3man543",
-            "dependabot[bot]",
-            "forgedhallpass"
-        ],
-        "truck_factor": 13,
-        "date": "2022-06-12 14:19:37"
-    },
-    {
-        "repository_name": "projectdiscovery/httpx",
-        "type": "commit",
-        "users": [
-            "V\u00edctor Zamanillo",
-            "bauthard",
-            "Mzack9999",
-            "LuitelSamikshya",
-            "mzack",
-            "Sami",
-            "M09Ic"
+            "sandeep"
         ],
         "truck_factor": 7,
-        "date": "2022-06-12 14:20:11"
+        "date": "2022-06-13 15:38:43"
     },
     {
-        "repository_name": "projectdiscovery/httpx",
+        "repository_name": "projectdiscovery/dsl",
+        "type": "commit",
+        "users": [
+            "Mzack9999"
+        ],
+        "truck_factor": 1,
+        "date": "2022-06-13 15:52:50"
+    },
+    {
+        "repository_name": "projectdiscovery/httputil",
+        "type": "commit",
+        "users": [
+            "mzack",
+            "Mzack9999"
+        ],
+        "truck_factor": 2,
+        "date": "2022-06-13 15:52:52"
+    },
+    {
+        "repository_name": "morph3/MIPS-Assembler",
+        "type": "stack",
+        "users": [
+            "morph3"
+        ],
+        "truck_factor": 1,
+        "date": "2022-06-13 15:54:02"
+    },
+    {
+        "repository_name": "morph3/resolveme",
+        "type": "stack",
+        "users": [
+            "morph3"
+        ],
+        "truck_factor": 1,
+        "date": "2022-06-13 15:54:05"
+    },
+    {
+        "repository_name": "projectdiscovery/dnsx",
         "type": "stack",
         "users": [
             "Mzack9999",
             "mzack",
-            "V\u00edctor Zamanillo",
-            "bauthard"
+            "sandeep"
         ],
-        "truck_factor": 4,
-        "date": "2022-06-12 14:20:26"
+        "truck_factor": 3,
+        "date": "2022-06-13 15:54:30"
+    },
+    {
+        "repository_name": "projectdiscovery/goconfig",
+        "type": "stack",
+        "users": [
+            "mzack"
+        ],
+        "truck_factor": 1,
+        "date": "2022-06-13 15:54:31"
+    },
+    {
+        "repository_name": "projectdiscovery/hmap",
+        "type": "stack",
+        "users": [
+            "Mzack9999"
+        ],
+        "truck_factor": 1,
+        "date": "2022-06-13 15:54:32"
+    },
+    {
+        "repository_name": "projectdiscovery/httputil",
+        "type": "stack",
+        "users": [
+            "mzack",
+            "Mzack9999"
+        ],
+        "truck_factor": 2,
+        "date": "2022-06-13 15:54:33"
     }
 ]

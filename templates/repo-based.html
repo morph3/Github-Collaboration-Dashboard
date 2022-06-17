@@ -408,7 +408,7 @@
                         <div id="commitDistributionChart" class="row">
 
                             <script>
-                                let repository_name = "{{repository_info.full_name}}";
+                                //let repository_name = "{{repository_info.full_name}}";
 
                                 fetch(`${window.location.protocol}//${window.location.host}/api/get_commit_distribution?r=${repository_name}`)
                                     .then(function(response) {
