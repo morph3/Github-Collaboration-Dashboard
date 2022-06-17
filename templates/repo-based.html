@@ -459,7 +459,7 @@
                         </div>
                         <div id="commitDistributionPieChart" class="row">
                             <script>
-                                fetch(`http://${window.location.host}/api/get_commit_distribution?r=${repository_name}`)
+                                fetch(`${window.location.protocol}//${window.location.host}/api/get_commit_distribution?r=${repository_name}`)
                                     .then(function(response) {
                                         return response.json();
                                     })
@@ -469,8 +469,8 @@
                                         let usernames = new Array();
 
                                         for (let i = 0; i < resultPie.length; i++) {
-                                            contributions.push(result[i].contributions);
-                                            usernames.push(result[i].login);
+                                            contributions.push(resultPie[i].contributions);
+                                            usernames.push(resultPie[i].login);
 
                                         }
                                         console.log(`Contributions_forPieChart: ${contributions}`);
