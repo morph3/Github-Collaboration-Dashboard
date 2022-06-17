@@ -190,7 +190,7 @@ class TestGithubAPIWrapper(unittest.TestCase):
         # test is true when the result of the method is same as the test_files
         self.assertTrue(files[i]['name']==test_files[i] for i in range(len(test_files)))
 
-
+"""
 # test case that checks the method can get the contributors of a selected repository
     def test_get_contributors(self):
         with open(os.getcwd() + "/.env", "r") as f:
@@ -208,9 +208,9 @@ class TestGithubAPIWrapper(unittest.TestCase):
         # the test is true when the result of the method is same as the test_contributors
         self.assertTrue(contributors[i]['login']==test_contributors[i] for i in range(len(test_contributors)))
 
-
+"""
 # test case to check the method can get the right gini index of a selected repository (commit based)
-    def test_get_gini_index(self):
+    def test_get_gini_index_commit(self):
         with open(os.getcwd() + "/.env", "r") as f:
             token = f.read().split("=")[1].strip()
         gaw = GithubAPIWrapper(token)
@@ -240,7 +240,7 @@ class TestGithubAPIWrapper(unittest.TestCase):
         test_gini = 0.8758360484881524
 
         # run the method
-        gini = gaw.commit_based_gini_index(repository_full_name=repo_full_name)
+        gini = gaw.issue_based_gini_index(repository_full_name=repo_full_name)
         
         # test is true when the result of the method is same as the test_gini
         self.assertEqual(gini, test_gini)
