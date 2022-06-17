@@ -32,4 +32,4 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(result, 0)
 
 if __name__ == '__main__':
-    unittest.main(verbosity=4)
+    unittest.main(verbosity=2)

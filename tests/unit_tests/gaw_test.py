@@ -2,18 +2,26 @@ import unittest
 import sys
 import os
 sys.path.append(os.getcwd() + '/src/')
+sys.path.append(os.getcwd() + '/../../src/')
 
 from GithubAPIWrapper import *
 
+
+token = ""
+try:
+    with open(os.getcwd()+"/.env", "r") as f:
+        token = f.read().split("=")[1].strip()
+except:
+    with open(os.getcwd()+"/../../.env", "r") as f:
+        token = f.read().split("=")[1].strip()
+
+gaw = GithubAPIWrapper(token)
 
 class TestGithubAPIWrapper(unittest.TestCase):
 
 # test case for check the method can get the repository information
     def test_get_repository_info(self):
-        with open(os.getcwd() + "/.env", "r") as f:
-            token = f.read().split("=")[1].strip()
-        gaw = GithubAPIWrapper(token)
-        
+
         # you can change the repository name here
         repo_full_name = "projectdiscovery/httpx"
         
@@ -25,10 +33,7 @@ class TestGithubAPIWrapper(unittest.TestCase):
 
 # test case for check the method can get the user information
     def test_get_user_info(self):
-        with open(os.getcwd() + "/.env", "r") as f:
-            token = f.read().split("=")[1].strip()
-        gaw = GithubAPIWrapper(token)
-        
+
         # you can change the user name here
         username = "Seqat"
         
@@ -40,10 +45,6 @@ class TestGithubAPIWrapper(unittest.TestCase):
 
 # test case to check the method can get the repository list of a selected user (only public repositories)
     def test_get_repositories(self):
-        with open(os.getcwd() + "/.env", "r") as f:
-            token = f.read().split("=")[1].strip()
-        gaw = GithubAPIWrapper(token)
-        
         # you can change the user name and repositories here
         username = "Seqat"
         
@@ -61,10 +62,7 @@ class TestGithubAPIWrapper(unittest.TestCase):
 
 # test case to check contributos of a selected repository
     def test_get_contributors(self):
-        with open(os.getcwd() + "/.env", "r") as f:
-            token = f.read().split("=")[1].strip()
-        gaw = GithubAPIWrapper(token)
-        
+
         # you can change the full repository name and the contributor list here
         repo_full_name = "apexcharts/apexcharts.js"
         
@@ -83,10 +81,6 @@ class TestGithubAPIWrapper(unittest.TestCase):
 
 # test case to cjheck the method can get the first commit hash of a selected repository
     def test_get_first_commit(self):
-        with open(os.getcwd() + "/.env", "r") as f:
-            token = f.read().split("=")[1].strip()
-        gaw = GithubAPIWrapper(token)
-        
         # you can change the full repository name and the first commit hash here
         repo_full_name  = "Seqat/HackerRankExercises"
         
@@ -100,10 +94,6 @@ class TestGithubAPIWrapper(unittest.TestCase):
 
 # test case to check the method can get the last commit hash of a selected repository
     def test_get_last_commit(self):
-        with open(os.getcwd() + "/.env", "r") as f:
-            token = f.read().split("=")[1].strip()
-        gaw = GithubAPIWrapper(token)
-        
         # you can change the full repository name and the last commit hash here
         repo_full_name  = "Seqat/HackerRankExercises"
         
@@ -117,9 +107,6 @@ class TestGithubAPIWrapper(unittest.TestCase):
 
 # test case to check the method can get the commit count of a selected repository
     def test_get_commit_count(self):
-        with open(os.getcwd() + "/.env", "r") as f:
-            token = f.read().split("=")[1].strip()
-        gaw = GithubAPIWrapper(token)
         
         # you can change the full repository name and the commit count here
         repo_full_name = "Seqat/HackerRankExercises"
@@ -137,10 +124,6 @@ class TestGithubAPIWrapper(unittest.TestCase):
 
 # test case to check the method can get all the branches of a selected repository
     def test_get_branches(self):
-        with open(os.getcwd() + "/.env", "r") as f:
-            token = f.read().split("=")[1].strip()
-        gaw = GithubAPIWrapper(token)
-        
         # you can change the full repository name and the branch list here
         repo_full_name = "xct/go-sqlite3"
         
@@ -157,14 +140,10 @@ class TestGithubAPIWrapper(unittest.TestCase):
 
 # test case to check the method can give the number of issues of a selected repository
     def test_get_issues_count(self):
-        with open(os.getcwd() + "/.env", "r") as f:
-            token = f.read().split("=")[1].strip()
-        gaw = GithubAPIWrapper(token)
-
         # you can change the full repository name and the issue counts here
         repo_full_name = "SerenityOS/serenity"
         
-        test_issues = {"open_issues": 506, "closed_issues": 2495}
+        test_issues = {"open_issues": 506, "closed_issues": 2499}
         
         # run the method
         issues=gaw.get_issues(repository_full_name=repo_full_name)
@@ -175,9 +154,6 @@ class TestGithubAPIWrapper(unittest.TestCase):
 
 # test case to check the method can get the files of a selected repository
     def test_get_files(self):
-        with open(os.getcwd() + "/.env", "r") as f:
-            token = f.read().split("=")[1].strip()
-        gaw = GithubAPIWrapper(token)
         
         # you can change the full repository name and the file list here
         
@@ -190,35 +166,14 @@ class TestGithubAPIWrapper(unittest.TestCase):
         # test is true when the result of the method is same as the test_files
         self.assertTrue(files[i]['name']==test_files[i] for i in range(len(test_files)))
 
-"""
-# test case that checks the method can get the contributors of a selected repository
-    def test_get_contributors(self):
-        with open(os.getcwd() + "/.env", "r") as f:
-            token = f.read().split("=")[1].strip()
-        gaw = GithubAPIWrapper(token)
 
-        # you can change the full repository name and the contributor list here
-        repo_full_name = "xct/ropstar"
-        
-        test_contributors = ['xct', 'Reelix', 'clubby789']
-        
-        # run the method
-        contributors= gaw.get_contributors(repository_full_name=repo_full_name)
-        
-        # the test is true when the result of the method is same as the test_contributors
-        self.assertTrue(contributors[i]['login']==test_contributors[i] for i in range(len(test_contributors)))
-
-"""
 # test case to check the method can get the right gini index of a selected repository (commit based)
     def test_get_gini_index_commit(self):
-        with open(os.getcwd() + "/.env", "r") as f:
-            token = f.read().split("=")[1].strip()
-        gaw = GithubAPIWrapper(token)
         
         # you can change the full repository name and the gini index here
         repo_full_name = "SerenityOS/serenity"
         
-        test_gini = 0.7622133020917038
+        test_gini = 0.7619838888677225
         
         # run the method
         gini= gaw.commit_based_gini_index(repository_full_name=repo_full_name)
@@ -230,14 +185,11 @@ class TestGithubAPIWrapper(unittest.TestCase):
 # test case to check the method can get the right gini index of a selected repository (issue based)
 
     def test_get_gini_index_issue(self):
-        with open(os.getcwd() + "/.env", "r") as f:
-            token = f.read().split("=")[1].strip()
-        gaw = GithubAPIWrapper(token)
 
         # you can change the full repository name and the gini index here
         repo_full_name = "borisdayma/dalle-mini"
 
-        test_gini = 0.8758360484881524
+        test_gini = 0.17755101895816328
 
         # run the method
         gini = gaw.issue_based_gini_index(repository_full_name=repo_full_name)
@@ -249,7 +201,7 @@ class TestGithubAPIWrapper(unittest.TestCase):
 
 if __name__ == "__main__":
 
-    unittest.main()
+    unittest.main(verbosity=2)
     
     """
     TODO: convert below to unit tests
