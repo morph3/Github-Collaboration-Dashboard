@@ -60,17 +60,5 @@ class TestDataStorage(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main(verbosity=2)
 
-    """
-    repo_name = "projectdiscovery/httpx"
-    type      = "heuristic"
-
-    print(f"All items for '{repo_name}': {storage.get_all('projectdiscovery/httpx','heuristic')}")
-
-    last_item = storage.get_last('projectdiscovery/httpx','heuristic')
-    #print(last_item)
-    if last_item:
-        print(f"Last item for '{repo_name}': {last_item}")
-
-    """
     # TODO:
     # Add more tests here.
